@@ -16,6 +16,8 @@ https://www.blog.plint-sites.nl/how-to-add-push-notifications-to-a-progressive-w
 https://jakearchibald.com/2014/offline-cookbook/
 https://github.com/davidgaroro/vuetify-todo-pwa
 
+https://naturaily.com/blog/pwa-vue-cli-3
+https://developers.google.com/web/tools/workbox/
 
 ## Project setup
 ```

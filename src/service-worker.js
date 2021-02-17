@@ -66,19 +66,49 @@ self.addEventListener('message', (e) => {
 });
 
 // Listen to Push
-self.addEventListener('push', (e) => {
-  let data;
-  if (e.data) {
-    data = e.data.json();
-  }
+// self.addEventListener('push', (e) => {
+//   let data;
+//   if (e.data) {
+//     data = e.data.json();
+//   }
 
-  const options = {
-    body: data.body,
-    icon: '/img/icons/android-chrome-192x192.png',
-    image: '/img/autumn-forest.png',
-    vibrate: [300, 200, 300],
-    badge: '/img/icons/plint-badge-96x96.png',
-  };
+//   const options = {
+//     body: data.body,
+//     icon: '/img/icons/android-chrome-192x192.png',
+//     image: '/img/autumn-forest.png',
+//     vibrate: [300, 200, 300],
+//     badge: '/img/icons/plint-badge-96x96.png',
+//   };
 
-  e.waitUntil(self.registration.showNotification(data.title, options));
-});
+//   e.waitUntil(self.registration.showNotification(data.title, options));
+// });
+
+
+// Below is an example I found on Github to cache map tiles but not ready to use it until I set up the service worker
+
+// this.addEventListener('install', function (event) {
+//   console.log('Installing Service Worker');
+//   event.waitUntil(this.skipWaiting());
+// });
+
+// this.addEventListener('activate', function (event) {
+//   event.waitUntil(this.clients.claim());
+// });
+
+// this.addEventListener('fetch', function(event) {
+//   var url = event.request.url;
+
+//   if(url.startsWith('https://') && (url.includes('tiles.mapbox.com') || url.includes('api.mapbox.com'))) {
+//     event.respondWith(
+//       caches.match(event.request).then(function(resp) {
+//         return resp || fetch(event.request).then(function(response) {
+//           var cacheResponse = response.clone();
+//           caches.open('mapbox').then(function(cache) {
+//             cache.put(event.request, cacheResponse);
+//           });
+//           return response;
+//         });
+//       })
+//     );
+//   }
+// });
