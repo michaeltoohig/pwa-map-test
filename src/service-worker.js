@@ -51,6 +51,7 @@ if (workbox) {
 
 // This code listens for the user's confirmation to update the app.
 self.addEventListener('message', (e) => {
+  console.log('message')
   if (!e.data) {
     return;
   }
@@ -63,6 +64,55 @@ self.addEventListener('message', (e) => {
       // NOOP
       break;
   }
+});
+
+
+// Below is from `zikes-web` found in a issue tracker - more complex than necessary perhaps by using DB
+import tileCacheDb from './tileCacheDb.js'
+const ourDomains = ["localhost:8000"];
+const mapTilesDomain = "tile.openstreetmap.org/";
+const ignoreDomains = ["googleapis", "facebook", "gstatic"];
+function fetchApplicationAsset(event) {
+    if (ourDomains.reduce(function(cum, domain) {
+        return cum || event.request.url.indexOf(domain) != -1;
+    }, false)) {
+        return fetchUserAsset(event);
+    }
+
+    return caches.match(event.request).then(function(response) {
+        if (response) {
+            return response;
+        }
+        var isMapTilesReq = event.request.url.indexOf(mapTilesDomain) != -1;
+        if (isMapTilesReq) {
+          
+            console.log(event.request.url)
+
+            var re = /\/(\d+)\/(\d+)\/(\d+).vector.pbf/;
+            var matched = event.request.url.match(re);
+            if (matched) {
+                console.log(matched)
+                var key = {z:matched[1],x:matched[2],y:matched[3]};
+                return tileCacheDb.get(key)
+                .then(function(tileBuffer) {
+                    if (tileBuffer) {
+                        return new Response(tileBuffer);
+                    }
+                    return fetch(event.request)
+                });
+            }
+        }
+
+        if (!ignoreDomains.find(function(domain) {return event.request.url.indexOf(domain) != -1})) {
+            console.log("Unmatched URL '" + event.request.url+"'");
+        }
+        return fetch(event.request);
+    });
+}
+
+self.addEventListener('fetch', function(event) {
+    console.log('fetch')
+    event.respondWith(fetchApplicationAsset(event));
 });
 
 // Listen to Push
@@ -83,7 +133,8 @@ self.addEventListener('message', (e) => {
 //   e.waitUntil(self.registration.showNotification(data.title, options));
 // });
 
-// Below is an example I found on Github to cache map tiles but not ready to use it until I set up the service worker
+
+// Below is an example I found on Github to cache map tiles
 
 // this.addEventListener('install', function (event) {
 //   console.log('Installing Service Worker');
@@ -94,15 +145,17 @@ self.addEventListener('message', (e) => {
 //   event.waitUntil(this.clients.claim());
 // });
 
-// this.addEventListener('fetch', function(event) {
+// self.addEventListener('fetch', (event) => {
 //   var url = event.request.url;
-
-//   if(url.startsWith('https://') && (url.includes('tiles.mapbox.com') || url.includes('api.mapbox.com'))) {
+//   console.log('fetch to', url)
+  
+//   if(url.startsWith('https://') && (url.includes('.tile.openstreetmap.org'))) {
+//     console.log('tile found')
 //     event.respondWith(
 //       caches.match(event.request).then(function(resp) {
 //         return resp || fetch(event.request).then(function(response) {
 //           var cacheResponse = response.clone();
-//           caches.open('mapbox').then(function(cache) {
+//           caches.open('tiles').then(function(cache) {
 //             cache.put(event.request, cacheResponse);
 //           });
 //           return response;

@@ -87,45 +87,45 @@ export default {
   }),
 
   methods: {
-    // hideMessage() {
-    //   this.showMessage = false;
-    // },
-    // showRefreshUI(e) {
-    //   this.registration = e.detail;
-    //   this.updateExists = true;
-    // },
-    // refreshApp() {
-    //   this.updateExists = false;
-    //   if (!this.registration || !this.registration.waiting) return;
-    //   // send message to SW to skip the waiting and activate the new SW
-    //   this.registration.waiting.postMessage('skipWaiting');
-    // },
-    // New workbox-window example
-    async accept() {
-      this.showUpdateUI = false;
-      await this.$workbox.messageSW({ type: 'SKIP_WAITING' });
+    hideMessage() {
+      this.showMessage = false;
     },
+    showRefreshUI(e) {
+      this.registration = e.detail;
+      this.updateExists = true;
+    },
+    refreshApp() {
+      this.updateExists = false;
+      if (!this.registration || !this.registration.waiting) return;
+      // send message to SW to skip the waiting and activate the new SW
+      this.registration.waiting.postMessage('skipWaiting');
+    },
+    // New workbox-window example
+    // async accept() {
+    //   this.showUpdateUI = false;
+    //   await this.$workbox.messageSW({ type: 'SKIP_WAITING' });
+    // },
   },
   created() {
-    if (this.$workbox) {
-      this.$workbox.addEventListener('waiting', () => {
-        this.showUpdateUI = true;
-      });
-    }
+    // if (this.$workbox) {
+    //   this.$workbox.addEventListener('waiting', () => {
+    //     this.showUpdateUI = true;
+    //   });
+    // }
 
     // Old version without using workbox-window
-    // // ---
-    // // Custom code to let user update the app
-    // // when a new service worker is available
-    // // ---
-    // document.addEventListener('swUpdated', this.showRefreshUI, { once: true });
+    // ---
+    // Custom code to let user update the app
+    // when a new service worker is available
+    // ---
+    document.addEventListener('swUpdated', this.showRefreshUI, { once: true });
 
-    // navigator.serviceWorker.addEventListener('controllerchange', () => {
-    //   if (this.refreshing) return;
-    //   this.refreshing = true;
-    //   // Here the actual reload of the page occurs
-    //   window.location.reload();
-    // });
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (this.refreshing) return;
+      this.refreshing = true;
+      // Here the actual reload of the page occurs
+      window.location.reload();
+    });
   },
 };
 </script>

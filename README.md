@@ -2,12 +2,18 @@
 
 Primarily a test ground to try some technologies I want to use for an app.
 
-- PWA
-- WebPush
+[x] PWA
+  [x] cache static files such as fonts
+  [ ] cache map tiles
+[ ] WebPush
 
 I want the app to work offline including the map tiles to be cached and preloaded.
 I want to be able to support pushing to the end user updates that they request.
 
+## Current task
+
+sw not intercepting fetch events
+continue looking hered: https://stackoverflow.com/questions/48381003/serviceworker-not-intercepting-urls
 
 ## Sources and Guides
 
