@@ -12,8 +12,12 @@ I want to be able to support pushing to the end user updates that they request.
 
 ## Current task
 
-sw not intercepting fetch events
-continue looking hered: https://stackoverflow.com/questions/48381003/serviceworker-not-intercepting-urls
+Finish watching: https://www.youtube.com/watch?v=15Yr-J4X34M
+Great tutorial video that details caching and push notifications
+
+Realized confusion between docs and tutorials is the change from v3 to v4 of workbox.
+https://developers.google.com/web/tools/workbox/guides/migrations/migrate-from-v3#workbox-core
+
 
 ## Sources and Guides
 
