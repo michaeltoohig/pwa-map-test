@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+/* eslint-disable */
 
 // custom service-worker.js
 if (workbox) {
@@ -82,7 +82,6 @@ self.addEventListener('message', (e) => {
 
 //   e.waitUntil(self.registration.showNotification(data.title, options));
 // });
-
 
 // Below is an example I found on Github to cache map tiles but not ready to use it until I set up the service worker
 
