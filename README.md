@@ -5,7 +5,7 @@ Primarily a test ground to try some technologies I want to use for an app.
 [x] PWA
   [ ] update popup UI
   [x] cache static files such as fonts
-  [ ] cache map tiles
+  [x] cache map tiles
 [x] WebPush
 
 I want the app to work offline including the map tiles to be cached and preloaded.
@@ -13,14 +13,19 @@ I want to be able to support pushing to the end user updates that they request.
 
 ## Current task
 
-Finish watching: https://www.youtube.com/watch?v=15Yr-J4X34M
-Great tutorial video that details caching and push notifications
+Tile cache quickly swelled over 300MB (duh) so now to try to use IndexedDB for tile 
+storage since it can hold much more. Must be careful not to fill the user's disk
+too much though but for short term app usage flying around the map of our town 
+the stored tiles will be reused often. Be sure to set an expiration on tiles.
 
 Realized confusion between docs and tutorials is the change from v3 to v4 of workbox.
 https://developers.google.com/web/tools/workbox/guides/migrations/migrate-from-v3#workbox-core
 
 
 ## Sources and Guides
+
+https://www.youtube.com/watch?v=15Yr-J4X34M
+Great tutorial video that details caching and push notifications
 
 https://github.com/web-push-libs/pywebpush
 https://www.blog.plint-sites.nl/how-to-add-push-notifications-to-a-progressive-web-app/

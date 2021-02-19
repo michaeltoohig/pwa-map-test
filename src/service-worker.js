@@ -71,6 +71,33 @@ workbox.routing.registerRoute(
   }),
 );
 
+const matchTileReqFunction = ({ url, request, e }) => {
+  console.log(url, request, e)
+  if (url.href.includes('tile.openstreetmap.org')) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+
+// cache tiles; works but fills cache quickly since storage is limited in cache
+workbox.routing.registerRoute(
+  matchTileReqFunction,
+  new workbox.strategies.CacheFirst({
+    cacheName: 'tiles',
+    plugins: [
+      new workbox.cacheableResponse.Plugin({
+        statuses: [0, 200],
+      }),
+      new workbox.expiration.Plugin({
+        maxAgeSeconds: 60,
+        maxEntries: 100,
+      })
+    ]
+  })
+);
+
 // This code listens for the user's confirmation to update the app.
 self.addEventListener('message', (e) => {
   console.log(e, e.data)
@@ -126,53 +153,55 @@ self.addEventListener('notificationclick', (e) => {
   };
 });
 
+
 // Below is from `zikes-web` found in a issue tracker - more complex than necessary perhaps by using DB
-importScripts('./tileCacheDb.js')
-const ourDomains = ["localhost:8000"];
-const mapTilesDomain = "tile.openstreetmap.org/";
-const ignoreDomains = ["googleapis", "facebook", "gstatic"];
-function fetchApplicationAsset(event) {
-    if (ourDomains.reduce(function(cum, domain) {
-        return cum || event.request.url.indexOf(domain) != -1;
-    }, false)) {
-        return fetchUserAsset(event);
-    }
+// importScripts('tileCacheDb.js');
+// console.log('imported cacheDb')
+// const ourDomains = ["localhost:8000"];
+// const mapTilesDomain = "tile.openstreetmap.org/";
+// const ignoreDomains = ["googleapis", "facebook", "gstatic"];
+// function fetchApplicationAsset(event) {
+//     if (ourDomains.reduce(function(cum, domain) {
+//         return cum || event.request.url.indexOf(domain) != -1;
+//     }, false)) {
+//         return fetchUserAsset(event);
+//     }
 
-    return caches.match(event.request).then(function(response) {
-        if (response) {
-            return response;
-        }
-        var isMapTilesReq = event.request.url.indexOf(mapTilesDomain) != -1;
-        if (isMapTilesReq) {
+//     return caches.match(event.request).then(function(response) {
+//         if (response) {
+//             return response;
+//         }
+//         var isMapTilesReq = event.request.url.indexOf(mapTilesDomain) != -1;
+//         if (isMapTilesReq) {
           
-            console.log(event.request.url)
+//             console.log(event.request.url)
 
-            var re = /\/(\d+)\/(\d+)\/(\d+).vector.pbf/;
-            var matched = event.request.url.match(re);
-            if (matched) {
-                console.log(matched)
-                var key = {z:matched[1],x:matched[2],y:matched[3]};
-                return tileCacheDb.get(key)
-                .then(function(tileBuffer) {
-                    if (tileBuffer) {
-                        return new Response(tileBuffer);
-                    }
-                    return fetch(event.request)
-                });
-            }
-        }
+//             var re = /\/(\d+)\/(\d+)\/(\d+).vector.pbf/;
+//             var matched = event.request.url.match(re);
+//             if (matched) {
+//                 console.log(matched)
+//                 var key = {z:matched[1],x:matched[2],y:matched[3]};
+//                 return tileCacheDb.get(key)
+//                 .then(function(tileBuffer) {
+//                     if (tileBuffer) {
+//                         return new Response(tileBuffer);
+//                     }
+//                     return fetch(event.request)
+//                 });
+//             }
+//         }
 
-        if (!ignoreDomains.find(function(domain) {return event.request.url.indexOf(domain) != -1})) {
-            console.log("Unmatched URL '" + event.request.url+"'");
-        }
-        return fetch(event.request);
-    });
-}
+//         if (!ignoreDomains.find(function(domain) {return event.request.url.indexOf(domain) != -1})) {
+//             console.log("Unmatched URL '" + event.request.url+"'");
+//         }
+//         return fetch(event.request);
+//     });
+// }
 
-self.addEventListener('fetch', function(event) {
-    console.log('fetch')
-    event.respondWith(fetchApplicationAsset(event));
-});
+// self.addEventListener('fetch', function(event) {
+//     console.log('fetch')
+//     // event.respondWith(fetchApplicationAsset(event));
+// });
 
 // Listen to Push
 // self.addEventListener('push', (e) => {
