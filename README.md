@@ -3,9 +3,10 @@
 Primarily a test ground to try some technologies I want to use for an app.
 
 [x] PWA
+  [ ] update popup UI
   [x] cache static files such as fonts
   [ ] cache map tiles
-[ ] WebPush
+[x] WebPush
 
 I want the app to work offline including the map tiles to be cached and preloaded.
 I want to be able to support pushing to the end user updates that they request.
@@ -32,6 +33,13 @@ https://developers.google.com/web/tools/workbox/
 
 
 ### Service Worker Notes
+
+Vue PWA uses workbox v4 but v5 and soon v6 will be available. To override the selected workbox 
+version manually I should look into something I found on github about `yarn selective-version-resolutions`.
+https://legacy.yarnpkg.com/en/docs/selective-version-resolutions/
+https://github.com/vuejs/vue-cli/issues/5119
+However this is a pre-mature optimization at this point. Just get v4 working for now.
+
 
 Since I want to use WebPush and possibly other sw features I have to use 'InjectManifest' plugin
 https://developers.google.com/web/tools/workbox/modules/workbox-webpack-plugin#which_plugin_to_use
