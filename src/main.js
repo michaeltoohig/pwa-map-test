@@ -8,9 +8,6 @@ import 'roboto-fontface/css/roboto/roboto-fontface.css';
 import '@mdi/font/css/materialdesignicons.css';
 import 'leaflet/dist/leaflet.css';
 
-// import wb from './registerServiceWorker';
-// Vue.prototype.$workbox = wb;
-
 Vue.config.productionTip = false;
 
 new Vue({

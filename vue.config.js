@@ -1,18 +1,15 @@
+const { InjectManifest } = require('workbox-webpack-plugin')
+
 module.exports = {
   transpileDependencies: [
     'vuetify',
   ],
-  pwa: {
-    workboxPluginMode: 'InjectManifest',
-    workboxOptions: {
-      swSrc: 'src/service-worker.js',
-      exclude: [
-        /\.map$/,
-        /manifest\.json$/,
-      ],
-    },
-    themeColor: '#42b983',
-    msTileColor: '#42b983',
-    appleMobileWebAppCache: 'yes',
-  },
+  configureWebpack: {
+    plugins: [
+      new InjectManifest({
+        swSrc: './src/service-worker-base.js',
+        swDest: 'service-worker.js'
+      })
+    ]
+  }
 };

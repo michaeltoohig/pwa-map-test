@@ -25,6 +25,7 @@ if (process.env.NODE_ENV === 'production') {
     },
     updated(registration) {
       console.log('New content is available! We\'ll show a refresh button for the user to click on and refresh');
+      // Signal frontend that a new update is available
       document.dispatchEvent(new CustomEvent('swUpdated', { detail: registration }));
     },
     offline() {
