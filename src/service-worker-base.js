@@ -1,10 +1,5 @@
 /* eslint-disable */
-// import {
-//   tileCacheDb
-// } from 'tileCacheDb';
-// import {
-//   WebPush
-// } from './sw-push';
+
 import {
   registerRoute,
   NavigationRoute,
@@ -91,13 +86,12 @@ registerRoute(
 
 import {
   tileCacheDb
-} from './tileCacheDb';
+} from 'tileCacheDb';
 console.log('#', tileCacheDb)
 
 const matchTileReqFunction = ({ url, request, e }) => {
   return url.href.includes('tile.openstreetmap.org')}
 
-  
 class CacheTileStrategy extends Strategy {
   async _handle(request, handler) {
     // const fetchAndCachePutDone = handler.fetchAndCachePut(request);
@@ -105,9 +99,10 @@ class CacheTileStrategy extends Strategy {
     console.log(request)
     console.log(tileCacheDb)
 
-    let = key = request.url.split('/')
+    let key = request.url.split('/')
+    console.log('fetching tile key', key)
     let response = await tileCacheDb.get(key)
-    console.log(response)
+    console.log('!!', response)
     // return new Promise((resolve, reject) => {
     //   fetchAndCachePutDone.then(resolve);
     //   cacheMatchDone.then((response) => response && resolve(response));
