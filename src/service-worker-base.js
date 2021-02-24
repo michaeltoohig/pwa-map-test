@@ -56,20 +56,24 @@ addEventListener('message', (event) => {
 // default page handler for offline usage,
 // where the browser does not how to handle deep links
 // it's a SPA, so each path that is a navigation should default to index.html
-registerRoute(
-  ({ event }) => event.request.mode === 'navigate',
-  async () => {
-    const defaultBase = '/index.html';
-    return caches
-      .match(workbox.precaching.getCacheKeyForURL(defaultBase))
-      .then(response => {
-          return response || fetch(defaultBase);
-      })
-      .catch(err => {
-        return fetch(defaultBase);
-      });
-  }
-);
+const matchCb = ({ url, event }) => {
+  return (url.pathname === '/');
+};
+registerRoute(matchCb, new NetworkFirst());
+// registerRoute(
+//   ({ event }) => event.request.mode === 'navigate',
+//   async () => {
+//     const defaultBase = '/index.html';
+//     return caches
+//       .match(workbox.precaching.getCacheKeyForURL(defaultBase))
+//       .then(response => {
+//           return response || fetch(defaultBase);
+//       })
+//       .catch(err => {
+//         return fetch(defaultBase);
+//       });
+//   }
+// );
 
 // const options = {
 //   databaseName: "tile-cache-data", // optional
@@ -84,55 +88,123 @@ registerRoute(
 // const indexedDbTileCache = require('@yaga/indexed-db-tile-cache');
 // const tileCache = new indexedDbTileCache.IndexedDbTileCache(options);
 
-import {
-  tileCacheDb
-} from 'tileCacheDb';
-console.log('#', tileCacheDb)
+// import Dexie from 'dexie';
+// const db = new Dexie('tiles-cache');
+// db.version(1).stores({
+//   tiles: '++id,url,tile',
+// });
 
-const matchTileReqFunction = ({ url, request, e }) => {
-  return url.href.includes('tile.openstreetmap.org')}
+// async function test() {
+//   var id = await db.tasks.put({ date: Date.now(), description: 'Test Dexie', done: 0 });
+//   console.log("Got id " + id);
+//   // Now lets add a bunch of tasks
+//   await db.tasks.bulkPut([
+//     { date: Date.now(), description: 'Test Dexie bulkPut()', done: 1 },
+//     { date: Date.now(), description: 'Finish testing Dexie bulkPut()', done: 1 }
+//   ]);
+//   // Ok, so let's query it
 
-class CacheTileStrategy extends Strategy {
-  async _handle(request, handler) {
-    // const fetchAndCachePutDone = handler.fetchAndCachePut(request);
-    // const cacheMatchDone = handler.cacheMatch(request); 
-    console.log(request)
-    console.log(tileCacheDb)
+//   var tasks = await db.tasks.where('done').above(0).toArray();
+//   console.log("Completed tasks: " + JSON.stringify(tasks, 0, 2));
 
-    let key = request.url.split('/')
-    console.log('fetching tile key', key)
-    let response = await tileCacheDb.get(key)
-    console.log('!!', response)
-    // return new Promise((resolve, reject) => {
-    //   fetchAndCachePutDone.then(resolve);
-    //   cacheMatchDone.then((response) => response && resolve(response));
-      
-    //   // Reject if both network and cache error or find no response.
-    //   Promise.allSettled([fetchAndCachePutDone, cacheMatchDone]).then((results) => {
-    //     const [fetchAndCachePutResult, cacheMatchResult] = results;
-    //     if (fetchAndCachePutResult.status === 'rejected' && !cacheMatchResult.value) {
-    //       reject(fetchAndCachePutResult.reason);
-    //     }  
-    //   });
-    // });
-  }
-}
+//   // Ok, so let's complete the 'Test Dexie' task.
+//   await db.tasks
+//     .where('description')
+//     .startsWithIgnoreCase('test dexi')
+//     .modify({ done: 1 });
+
+//   console.log("All tasks should be completed now.");
+//   console.log("Now let's delete all old tasks:");
+
+//   // And let's remove all old tasks:
+//   await db.tasks
+//     .where('date')
+//     .below(Date.now())
+//     .delete();
+
+//   console.log("Done.");
+// }
+
+// async function tileCacheMatch(request) {
+//   var tile = await db.tiles.
+// }
+// test().catch(err => {
+//   console.error("Uh oh! " + err.stack);
+// });
+
+importScripts('./tileCacheDb.js')
+console.log(this.db)
+
+
+const handlerCb = async ({ url, request, event, params }) => {
+  // let response = await db.tiles.filter(function (tile) {
+  //   return tile.url === url.href;
+  // }).first()
+  // console.log(response)
+  
+  const response = await fetch(request);
+  const responseBody = await response.text();
+  return new Response(`${responseBody} <!-- Look Ma. Added Content. -->`, {
+    headers: response.headers,
+  });
+};
 
 registerRoute(
-  matchTileReqFunction,
-  new CacheTileStrategy({
-    cacheName: 'map-tiles-1',
-    // plugins: [
-    //   new CacheableResponsePlugin({
-    //     status: [0, 200],
-    //   }),
-    //   new ExpirationPlugin({
-    //     maxEntries: 50,
-    //     maxAgeSeconds: 60,
-    //   })
-    // ]
-  })
+  ({ url }) => url.href.includes('tile.openstreetmap.org'),
+  async ({ url, request, event, params }) => {
+    // let response = await db.tasks.where('')
+    const response = await fetch(request);
+    const responseBody = await response.text();
+    return new Response(`${responseBody} <!-- Look Ma. Added Content. -->`, {
+      headers: response.headers,
+    });
+  }
 );
+
+// const matchTileReqFunction = ({ url, request, e }) => {
+//   return url.href.includes('tile.openstreetmap.org')}
+
+// class CacheTileStrategy extends Strategy {
+//   async _handle(request, handler) {
+//     // const fetchAndCachePutDone = handler.fetchAndCachePut(request);
+//     // const cacheMatchDone = handler.cacheMatch(request); 
+//     console.log(request)
+//     console.log(tileCacheDb)
+
+//     let key = request.url.split('/')
+//     console.log('fetching tile key', key)
+//     let response = await tileCacheDb.get(key)
+//     console.log('!!', response)
+//     // return new Promise((resolve, reject) => {
+//     //   fetchAndCachePutDone.then(resolve);
+//     //   cacheMatchDone.then((response) => response && resolve(response));
+      
+//     //   // Reject if both network and cache error or find no response.
+//     //   Promise.allSettled([fetchAndCachePutDone, cacheMatchDone]).then((results) => {
+//     //     const [fetchAndCachePutResult, cacheMatchResult] = results;
+//     //     if (fetchAndCachePutResult.status === 'rejected' && !cacheMatchResult.value) {
+//     //       reject(fetchAndCachePutResult.reason);
+//     //     }  
+//     //   });
+//     // });
+//   }
+// }
+
+// registerRoute(
+//   matchTileReqFunction,
+//   new CacheTileStrategy({
+//     cacheName: 'map-tiles-1',
+//     // plugins: [
+//     //   new CacheableResponsePlugin({
+//     //     status: [0, 200],
+//     //   }),
+//     //   new ExpirationPlugin({
+//     //     maxEntries: 50,
+//     //     maxAgeSeconds: 60,
+//     //   })
+//     // ]
+//   })
+// );
 
 // Not useful for our SPA I believe
 // // Cache page navigations (html) with a Network First strategy
