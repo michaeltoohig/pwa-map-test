@@ -50,7 +50,7 @@
     </v-app-bar>
 
     <v-main>
-      <h3>v6</h3>
+      <h3>v7</h3>
       <button v-if="updateExists" @click="refreshApp">Update</button>
 
       <router-view></router-view>

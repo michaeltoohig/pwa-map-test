@@ -1,5 +1,6 @@
 /* eslint-disable */
 
+import Dexie from 'dexie';
 import {
   registerRoute,
   NavigationRoute,
@@ -16,6 +17,7 @@ import {
   PrecacheFallbackPlugin,
   precacheAndRoute,
 } from 'workbox-precaching';
+import { WorkboxError } from 'workbox-core/_private/WorkboxError.js';
 // Used for filtering matches based on status code, header, or both
 import { CacheableResponsePlugin } from 'workbox-cacheable-response';
 // Used to limit entries in cache, remove entries after a certain period of time
@@ -132,8 +134,6 @@ registerRoute(matchCb, new NetworkFirst());
 //   console.error("Uh oh! " + err.stack);
 // });
 
-import Dexie from 'dexie';
-
 // const db = new Dexie('hellodb');
 // db.version(1).stores({
 //   tiles: '++id,url,tile',
@@ -161,15 +161,18 @@ import Dexie from 'dexie';
 
 class CacheMapTiles extends Strategy {
   async cacheMatch(input) {
+    console.log('in cacheMatch')
     let url = input.url
-    return await this._db.tiles.filter(tile => tile.url === url).first()
+    let response = await this._db.tiles.filter(tile => tile.url === url).first().catch((err) => console.log('db err', err))
+    return response
   }
 
   async cachePut(handler, input, response) {
+    console.log('in cachePut')
     // Run in the next task to avoid blocking other cache reads.
     await timeout(0);
-    const responseToCache = await handler._ensureResponseSafeToCache(responseClone)
-    
+    const responseToCache = await handler.waitUntil(handler._ensureResponseSafeToCache(responseClone));
+    console.log('toCache', responseToCache)
     await this._db.tiles.put({ url: url, tile: response })
   }
 
@@ -177,7 +180,8 @@ class CacheMapTiles extends Strategy {
     const response = await handler.fetch(input);
     const responseClone = response.clone();
     // TODO save cloned response to our cache
-    // this.waitUntil(this.cachePut(input, responseClone));
+    // await this.cachePut(handler, input, responseClone)
+    handler.waitUntil(this.cachePut(handler, input, responseClone));
     // this.cachePut(handler, input, responseClone)
     return response
   }
