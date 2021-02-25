@@ -26,6 +26,13 @@ the stored tiles will be reused often. Be sure to set an expiration on tiles.
 Realized confusion between docs and tutorials is the change from v3 to v4 of workbox.
 https://developers.google.com/web/tools/workbox/guides/migrations/migrate-from-v3#workbox-core
 
+## Map Notes
+
+Vector tiles are what we want instead of raster tiles since we live in an area where bandwidth
+considerations are paramount. They require more CPU to render though but I'll take that instead 
+of consuming bandwidth and phone storage in IndexedDB.
+
+[ ] Leaflet supports vector tiles non-natively - is there a newer alternative for vector tiles?
 
 ## Sources and Guides
 

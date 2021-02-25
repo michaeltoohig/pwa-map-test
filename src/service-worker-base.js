@@ -22,6 +22,7 @@ import { WorkboxError } from 'workbox-core/_private/WorkboxError.js';
 import { CacheableResponsePlugin } from 'workbox-cacheable-response';
 // Used to limit entries in cache, remove entries after a certain period of time
 import { ExpirationPlugin } from 'workbox-expiration';
+import { timeout } from 'workbox-core/_private/timeout.js';
 
 // Use with precache injection
 precacheAndRoute(self.__WB_MANIFEST);
@@ -171,9 +172,9 @@ class CacheMapTiles extends Strategy {
     console.log('in cachePut')
     // Run in the next task to avoid blocking other cache reads.
     await timeout(0);
-    const responseToCache = await handler.waitUntil(handler._ensureResponseSafeToCache(responseClone));
-    console.log('toCache', responseToCache)
-    await this._db.tiles.put({ url: url, tile: response })
+    // const responseToCache = await handler._ensureResponseSafeToCache(response);
+    // console.log('toCache', responseToCache)
+    await this._db.tiles.put({ url: input.url, tile: response })
   }
 
   async fetchAndCachePut(handler, input) {
@@ -181,6 +182,7 @@ class CacheMapTiles extends Strategy {
     const responseClone = response.clone();
     // TODO save cloned response to our cache
     // await this.cachePut(handler, input, responseClone)
+    console.log('clone in facp', responseClone)
     handler.waitUntil(this.cachePut(handler, input, responseClone));
     // this.cachePut(handler, input, responseClone)
     return response
