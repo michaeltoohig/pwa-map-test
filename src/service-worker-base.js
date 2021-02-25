@@ -132,33 +132,92 @@ registerRoute(matchCb, new NetworkFirst());
 //   console.error("Uh oh! " + err.stack);
 // });
 
-importScripts('./tileCacheDb.js')
-console.log(this.db)
+import Dexie from 'dexie';
 
+// const db = new Dexie('hellodb');
+// db.version(1).stores({
+//   tiles: '++id,url,tile',
+// });
 
-const handlerCb = async ({ url, request, event, params }) => {
-  // let response = await db.tiles.filter(function (tile) {
-  //   return tile.url === url.href;
-  // }).first()
-  // console.log(response)
+// const tileHandlerCb = async ({ url, event, params }) => {
+
+//   // cacheMatch
+//   let cachedTile = await db.tiles.filter(function (tile) {
+//     return tile.url === url.href;
+//   }).first()
+//   console.log(cachedTile)
   
-  const response = await fetch(request);
-  const responseBody = await response.text();
-  return new Response(`${responseBody} <!-- Look Ma. Added Content. -->`, {
-    headers: response.headers,
-  });
-};
+//   // let response = await db.tiles.filter(function (tile) {
+//   //   return tile.url === url.href;
+//   // }).first()
+//   // console.log(response)
+  
+//   const response = await fetch(request);
+//   const responseBody = await response.text();
+//   return new Response(`${responseBody} <!-- Look Ma. Added Content. -->`, {
+//     headers: response.headers,
+//   });
+// };
+
+class CacheMapTiles extends Strategy {
+  async cacheMatch(input) {
+    let url = input.url
+    return await this._db.tiles.filter(tile => tile.url === url).first()
+  }
+
+  async cachePut(handler, input, response) {
+    // Run in the next task to avoid blocking other cache reads.
+    await timeout(0);
+    const responseToCache = await handler._ensureResponseSafeToCache(responseClone)
+    
+    await this._db.tiles.put({ url: url, tile: response })
+  }
+
+  async fetchAndCachePut(handler, input) {
+    const response = await handler.fetch(input);
+    const responseClone = response.clone();
+    // TODO save cloned response to our cache
+    // this.waitUntil(this.cachePut(input, responseClone));
+    // this.cachePut(handler, input, responseClone)
+    return response
+  }
+
+  constructor(options) {
+    super(options);
+    this._db = new Dexie('hellodb')
+    this._db.version(1).stores({
+      tiles: '++id,url,tile'
+    })
+  }
+
+  async _handle(request, handler) {
+    let response = await this.cacheMatch(request);
+    let error;
+    if (!response) {
+      try {
+        response = await this.fetchAndCachePut(handler, request);
+      }
+      catch (err) {
+        error = err;
+      }
+      // TODO log got or error
+      
+      
+    }
+    else {
+      // TODO log found a cached response
+    }
+    // TODO maybe log like CacheFirst
+    if (!response) {
+      throw new WorkboxError('no-response', { url: request.url, error })
+    }
+    return response;
+  }
+}
 
 registerRoute(
   ({ url }) => url.href.includes('tile.openstreetmap.org'),
-  async ({ url, request, event, params }) => {
-    // let response = await db.tasks.where('')
-    const response = await fetch(request);
-    const responseBody = await response.text();
-    return new Response(`${responseBody} <!-- Look Ma. Added Content. -->`, {
-      headers: response.headers,
-    });
-  }
+  new CacheMapTiles(),
 );
 
 // const matchTileReqFunction = ({ url, request, e }) => {

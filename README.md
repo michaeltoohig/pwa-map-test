@@ -4,7 +4,7 @@ Primarily a test ground to try some technologies I want to use for an app.
 
 [x] PWA
   [x] update popup UI
-  [ ] cache static files such as fonts
+  [x] cache static files such as fonts
   [ ] cache map tiles
 [x] WebPush
 
@@ -13,10 +13,7 @@ I want to be able to support pushing to the end user updates that they request.
 
 ## Current task
 
-Upgrading to workbox v6 where vue pwa plugin only uses v4 so I've removed. Now I have 
-to update my old service worker code use new v6 conventions. v5 and v6 support bundling 
-the service worker and therefore I believe I can import the tileCacheDb class I copied 
-so I'll be able to save tiles in indexedDB where in v4 I couldn't import it and use it.
+[ ] figure out how to use Dexie for caching tiles and making custom route handler for workbox
 
 [ ] replace old register route in v4 to v6 convention that always returns to index.html since this is a SPA
 [ ] cache for images, static content, etc
