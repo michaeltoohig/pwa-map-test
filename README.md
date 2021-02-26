@@ -18,11 +18,13 @@ Primarily a test ground to try some technologies I want to use for an app.
 I want the app to work offline including the map tiles to be cached and preloaded.
 I want to be able to support pushing to the end user updates that they request.
 
+
 ## Current task
 
 I now can cache map tiles. I need to be able to expire them and perform a staleWhileRevalidate 
 strategy when I pass the expiration date unless we are currently offline then continue using 
 the cache. I also need to handle when the cache fills up a clear cache strategy.
+
 
 ## Map Notes
 
@@ -37,10 +39,12 @@ Others:
   - OpenLayers
   - MapBox GL JS
 
+
 ## IndexedDB Notes
 
 Storing blobs is not supported everywhere so need to try and catch apparently.
 https://developers.google.com/web/updates/2014/07/Blob-support-for-IndexedDB-landed-on-Chrome-Dev
+
 
 ## Sources and Guides
 
@@ -59,10 +63,8 @@ https://developers.google.com/web/tools/workbox/
 
 ### Service Worker Notes
 
-
 Since I want to use WebPush and possibly other sw features I have to use 'InjectManifest' plugin
 https://developers.google.com/web/tools/workbox/modules/workbox-webpack-plugin#which_plugin_to_use
-
 
 Service workers are not active in development mode. Must build the project then run built files to 
 see sw in action.
