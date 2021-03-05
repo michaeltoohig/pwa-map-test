@@ -15,6 +15,7 @@ Primarily a test ground to try some technologies I want to use for an app.
 [x] Map
   [ ] dark theme map design
   [ ] bounded area
+  [ ] max zoom out
   [x] loading bar across page for currently downloading tiles
 
 I want the app to work offline including the map tiles to be cached and preloaded.
@@ -23,9 +24,9 @@ I want to be able to support pushing to the end user updates that they request.
 
 ## Current task
 
-I now can cache map tiles. I need to be able to expire them and perform a staleWhileRevalidate 
-strategy when I pass the expiration date unless we are currently offline then continue using 
-the cache. I also need to handle when the cache fills up a clear cache strategy.
+Bounding the map is easy but what is the difference between `bounds` and `maxBounds`?
+
+I now can cache map tiles. I need to handle when the cache throws quota limit exceeded error.
 
 
 ## Map Notes

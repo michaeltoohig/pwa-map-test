@@ -36,7 +36,6 @@ addEventListener('message', (event) => {
   }
 });
 
-
 /* Map Tile Caching */
 
 // Setup the cache DB
@@ -233,25 +232,56 @@ registerRoute(
 //   }),
 // );
 
-// Cache CSS, JS, and Web Worker requests with a Stale While Revalidate strategy
-registerRoute(
-  // Check to see if the request's destination is style for stylesheets, script for JavaScript, or worker for web worker
-  ({ request }) =>
-    request.destination === 'style' ||
-    request.destination === 'script' ||
-    request.destination === 'worker',
-  // Use a Stale While Revalidate caching strategy
-  new StaleWhileRevalidate({
-    // Put all cached files in a cache named 'assets'
-    cacheName: 'assets',
-    plugins: [
-      // Ensure that only requests that result in a 200 status are cached
-      new CacheableResponsePlugin({
-        statuses: [200],
-      }),
-    ],
-  }),
-);
+// Make sure to return a specific response for all navigation requests.
+// Since we have a SPA here, this should be index.html always.
+// https://stackoverflow.com/questions/49963982/vue-router-history-mode-with-pwa-in-offline-mode
+// NavigationRoute('/index.html');
+
+// // Setup cache strategy for Google Fonts. They consist of two parts, a static one
+// // coming from fonts.gstatic.com (strategy CacheFirst) and a more ferquently updated on
+// // from fonts.googleapis.com. Hence, split in two registerroutes
+// registerRoute(
+//   /^https:\/\/fonts\.googleapis\.com/,
+//   new StaleWhileRevalidate({
+//     cacheName: 'google-fonts-stylesheets',
+//   }),
+// );
+
+// registerRoute(
+//   /^https:\/\/fonts\.gstatic\.com/,
+//   new CacheFirst({
+//     cacheName: 'google-fonts-webfonts',
+//     plugins: [
+//       new CacheableResponsePlugin({
+//         statuses: [0, 200],
+//       }),
+//       new ExpirationPlugin({
+//         maxAgeSeconds: 60 * 60 * 24 * 365,
+//         maxEntries: 30,
+//       }),
+//     ],
+//   }),
+// );
+
+// // Cache CSS, JS, and Web Worker requests with a Stale While Revalidate strategy
+// registerRoute(
+//   // Check to see if the request's destination is style for stylesheets, script for JavaScript, or worker for web worker
+//   ({ request }) =>
+//     request.destination === 'style' ||
+//     request.destination === 'script' ||
+//     request.destination === 'worker',
+//   // Use a Stale While Revalidate caching strategy
+//   new StaleWhileRevalidate({
+//     // Put all cached files in a cache named 'assets'
+//     cacheName: 'assets',
+//     plugins: [
+//       // Ensure that only requests that result in a 200 status are cached
+//       new CacheableResponsePlugin({
+//         statuses: [200],
+//       }),
+//     ],
+//   }),
+// );
 
 // // Cache images with a Cache First strategy
 // registerRoute(
@@ -316,12 +346,12 @@ registerRoute(
 //   });
 // }
 
+/* Web Push Notifications */
+
 self.addEventListener('push', (e) => {
   if (!(self.Notification && self.Notification.permission === 'granted')) {
     return;
   };
-  
-  console.log('push:', e.data.json());
   let push_data = e.data.json();
   const options = {
     actions: push_data.actions,

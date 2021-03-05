@@ -1,22 +1,16 @@
 <template>
-  <v-container>
-    <div style="height: 500px; width: 100%">
-      <div style="height: 200px overflow: auto;">
-        <p>First marker is placed at {{ withPopup.lat }}, {{ withPopup.lng }}</p>
-        <p>Center is at {{ currentCenter }} and the zoom is: {{ currentZoom }}</p>
-        <button @click="showLongText">
-          Toggle long popup
-        </button>
-        <button @click="showMap = !showMap">
-          Toggle map
-        </button>
-      </div>
+  <v-container
+    id="map-wrapper"
+    class="pa-0"
+  >
       <l-map
+        style="z-index: 0;"
         v-if="showMap"
         :zoom="zoom"
         :center="center"
+        :bounds="bounds"
+        :max-bounds="maxBounds"
         :options="mapOptions"
-        style="height: 80%"
         @update:center="centerUpdate"
         @update:zoom="zoomUpdate"
       >
@@ -28,6 +22,21 @@
           @loading="mapLoading = true"
           @load="tileLoadComplete"
         />
+
+        <l-control
+          class="example-custom-control"
+        >
+          <v-card
+            width="400"
+            mr-3
+            mt-3
+          >
+            <v-card-text>
+              <p>Center: {{ currentCenter }} zoom: {{ currentZoom }}</p>
+            </v-card-text>
+          </v-card>
+        </l-control>
+
         <l-marker :lat-lng="withPopup">
           <l-popup>
             <div @click="innerClick">
@@ -59,22 +68,19 @@
         v-model="tilesLoadingPercent"
         color="deep-purple accent-4"
       ></v-progress-linear>
-      {{ mapLoading }} {{ tilesLoadingPercent }}
-
-    </div>
   </v-container>
 </template>
 
 <script>
 import {
-  latLng,
+  latLng, latLngBounds,
 } from 'leaflet';
 import {
   LMap, LTileLayer, LMarker, LPopup, LTooltip,
 } from 'vue2-leaflet';
 
 export default {
-  name: 'HelloWorld',
+  name: 'Map',
   components: {
     LMap,
     LTileLayer,
@@ -85,7 +91,15 @@ export default {
   data() {
     return {
       zoom: 13,
-      center: latLng(47.41322, -1.219482),
+      center: latLng(-17.8, 168.7),
+      bounds: latLngBounds([
+        [-17.667, 168.21],
+        [-17.830, 168.47],
+      ]),
+      maxBounds: latLngBounds([
+        [-17.667, 168.21],
+        [-17.830, 168.47],
+      ]),
       url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       attribution:
         '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
@@ -132,3 +146,14 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+#map-wrapper {
+  width: 100%;
+  height: 100vh;
+}
+
+.example-custom-control > .v-card {
+  z-index: 2000;
+}
+</style>
