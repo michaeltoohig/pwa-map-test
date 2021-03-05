@@ -7,6 +7,7 @@
         style="z-index: 0;"
         v-if="showMap"
         :zoom="zoom"
+        :min-zoom="minZoom"
         :center="center"
         :bounds="bounds"
         :max-bounds="maxBounds"
@@ -24,6 +25,7 @@
         />
 
         <l-control
+          :position="'bottomleft'"
           class="example-custom-control"
         >
           <v-card
@@ -76,7 +78,7 @@ import {
   latLng, latLngBounds,
 } from 'leaflet';
 import {
-  LMap, LTileLayer, LMarker, LPopup, LTooltip,
+  LMap, LTileLayer, LMarker, LPopup, LTooltip, LControl,
 } from 'vue2-leaflet';
 
 export default {
@@ -87,11 +89,13 @@ export default {
     LMarker,
     LPopup,
     LTooltip,
+    LControl,
   },
   data() {
     return {
-      zoom: 13,
-      center: latLng(-17.8, 168.7),
+      zoom: 14.5,
+      minZoom: 12,
+      center: latLng(-17.741526, 168.312024),
       bounds: latLngBounds([
         [-17.667, 168.21],
         [-17.830, 168.47],
@@ -103,15 +107,16 @@ export default {
       url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       attribution:
         '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-      withPopup: latLng(47.41322, -1.219482),
-      withTooltip: latLng(47.41422, -1.250482),
-      currentZoom: 11.5,
-      currentCenter: latLng(47.41322, -1.219482),
+      withPopup: latLng(-17.751526, 168.2421994),
+      withTooltip: latLng(-17.741821, 168.320009),
+      currentZoom: 14.5,
+      currentCenter: latLng(-17.741526, 168.312024),
       showParagraph: false,
       mapOptions: {
         zoomSnap: 0.5,
       },
       showMap: true,
+      // Loading bar variables
       mapLoading: false,
       mapTileLoading: 0,
       mapTileLoaded: 0,

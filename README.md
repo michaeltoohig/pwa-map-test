@@ -14,8 +14,8 @@ Primarily a test ground to try some technologies I want to use for an app.
 [x] WebPush
 [x] Map
   [ ] dark theme map design
-  [ ] bounded area
-  [ ] max zoom out
+  [x] bounded area
+  [x] max zoom out
   [x] loading bar across page for currently downloading tiles
 
 I want the app to work offline including the map tiles to be cached and preloaded.
@@ -25,6 +25,9 @@ I want to be able to support pushing to the end user updates that they request.
 ## Current task
 
 Bounding the map is easy but what is the difference between `bounds` and `maxBounds`?
+  - `bounds` attribute can support `.sync` modifier so perhaps I can use it as a rolling value to query for markers within my current view and show them as a list to select from in a menu
+  - `maxBounds` attribute is absolute limit of the map navigation. I'll limit it to an area I want to keep the user so their map can not travel freely anywhere and build up a considerable cache.
+
 
 I now can cache map tiles. I need to handle when the cache throws quota limit exceeded error.
 
