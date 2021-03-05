@@ -23,6 +23,10 @@
         <l-tile-layer
           :url="url"
           :attribution="attribution"
+          @tileloadstart="mapTileLoading += 1"
+          @tileload="mapTileLoaded += 1"
+          @loading="mapLoading = true"
+          @load="tileLoadComplete"
         />
         <l-marker :lat-lng="withPopup">
           <l-popup>
@@ -49,6 +53,14 @@
           </l-tooltip>
         </l-marker>
       </l-map>
+
+      <v-progress-linear
+        :active="mapLoading"
+        v-model="tilesLoadingPercent"
+        color="deep-purple accent-4"
+      ></v-progress-linear>
+      {{ mapLoading }} {{ tilesLoadingPercent }}
+
     </div>
   </v-container>
 </template>
@@ -86,9 +98,25 @@ export default {
         zoomSnap: 0.5,
       },
       showMap: true,
+      mapLoading: false,
+      mapTileLoading: 0,
+      mapTileLoaded: 0,
     };
   },
+  computed: {
+    tilesLoadingPercent() {
+      if (!this.mapLoading) return 100;
+      return Math.round((this.mapTileLoaded / this.mapTileLoading) * 100);
+    },
+  },
   methods: {
+    tileLoadComplete() {
+      setTimeout(() => {
+        this.mapLoading = false;
+        this.mapTileLoading = 0;
+        this.mapTileLoaded = 0;
+      }, 500);
+    },
     zoomUpdate(zoom) {
       this.currentZoom = zoom;
     },

@@ -7,14 +7,16 @@ Primarily a test ground to try some technologies I want to use for an app.
   [x] update popup UI
   [x] cache static files such as fonts
   [x] cache map tiles
-    [ ] expire map tiles (staleWhileValidate)
-    [ ] speed up cache retreival by using indexed key instead of filter
+    [ ] learn to migrate database schema
+    [x] expire map tiles (staleWhileValidate)
+    [x] speed up cache retreival by using indexed key instead of filter
     [ ] handle cache full
 [x] WebPush
 [x] Map
   [ ] dark theme map design
   [ ] bounded area
-  
+  [x] loading bar across page for currently downloading tiles
+
 I want the app to work offline including the map tiles to be cached and preloaded.
 I want to be able to support pushing to the end user updates that they request.
 
@@ -38,6 +40,10 @@ of consuming bandwidth and phone storage in IndexedDB.
 Others:
   - OpenLayers
   - MapBox GL JS
+
+Loading bar
+https://openlayers.org/en/latest/examples/tile-load-events.html
+https://leafletjs.com/reference-1.7.1.html#tilelayer-loading
 
 
 ## IndexedDB Notes

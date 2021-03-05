@@ -27,26 +27,6 @@ import { timeout } from 'workbox-core/_private/timeout.js';
 // Use with precache injection
 precacheAndRoute(self.__WB_MANIFEST);
 
-// NOTE: below is v5 code I found so not sure if a change since then has been made
-// Make sure to return a specific response for all navigation requests.
-// Since we have a SPA here, this should be index.html always.
-// https://stackoverflow.com/questions/49963982/vue-router-history-mode-with-pwa-in-offline-mode
-// const handler = createHandlerBoundToURL("/index.html");
-// const navRoute = new NavigationRoute(handler);
-// registerRoute(navRoute);
-
-// This one below does not seem to work
-// registerRoute(
-//   ({ request }) => request.mode === 'navigate',
-//   new NetworkOnly({
-//     plugins: [
-//       new PrecacheFallbackPlugin({
-//         fallbackURL: '/index.html',
-//       }),
-//     ],
-//   }),
-// );
-
 addEventListener('message', (event) => {
   console.log(event, event.data, event.data.type)
   if (!event.data) return;
@@ -56,252 +36,184 @@ addEventListener('message', (event) => {
   }
 });
 
-// const matchCb = ({ url, event }) => {
-//   return (url.pathname === '/');
-// };
-// registerRoute(matchCb, new NetworkFirst());
-// default page handler for offline usage,
-// where the browser does not how to handle deep links
-// it's a SPA, so each path that is a navigation should default to index.html
-registerRoute(
-  ({ event }) => event.request.mode === 'navigate',
-  async () => {
-    const defaultBase = '/index.html';
-    return caches
-      .match(workbox.precaching.getCacheKeyForURL(defaultBase))
-      .then(response => {
-          return response || fetch(defaultBase);
-      })
-      .catch(err => {
-        return fetch(defaultBase);
-      });
-  }
-);
 
-// const options = {
-//   databaseName: "tile-cache-data", // optional
-//   databaseVersion: 1, // optional
-//   objectStoreName: "OSM", // optional
-//   tileUrl: "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", // optional
-//   tileUrlSubDomains: ["a", "b", "c"], // optional
-//   crawlDelay: 500, // optional
-//   maxAge: 1000 * 60 * 60 * 24 * 7, // optional
-// };
+/* Map Tile Caching */
 
-// const indexedDbTileCache = require('@yaga/indexed-db-tile-cache');
-// const tileCache = new indexedDbTileCache.IndexedDbTileCache(options);
+// Setup the cache DB
+const db = new Dexie('map-tiles-cache');
+db.version(2).stores({
+  tiles: '++id,&coords,accessed'
+});
 
-// import Dexie from 'dexie';
-// const db = new Dexie('tiles-cache');
-// db.version(1).stores({
-//   tiles: '++id,url,tile',
-// });
+const getTile = async (url) => {
+  let key = urlToCacheKey(url)
+  return db.tiles.where('coords').equals(key).first()
+}
 
-// async function test() {
-//   var id = await db.tasks.put({ date: Date.now(), description: 'Test Dexie', done: 0 });
-//   console.log("Got id " + id);
-//   // Now lets add a bunch of tasks
-//   await db.tasks.bulkPut([
-//     { date: Date.now(), description: 'Test Dexie bulkPut()', done: 1 },
-//     { date: Date.now(), description: 'Finish testing Dexie bulkPut()', done: 1 }
-//   ]);
-//   // Ok, so let's query it
-
-//   var tasks = await db.tasks.where('done').above(0).toArray();
-//   console.log("Completed tasks: " + JSON.stringify(tasks, 0, 2));
-
-//   // Ok, so let's complete the 'Test Dexie' task.
-//   await db.tasks
-//     .where('description')
-//     .startsWithIgnoreCase('test dexi')
-//     .modify({ done: 1 });
-
-//   console.log("All tasks should be completed now.");
-//   console.log("Now let's delete all old tasks:");
-
-//   // And let's remove all old tasks:
-//   await db.tasks
-//     .where('date')
-//     .below(Date.now())
-//     .delete();
-
-//   console.log("Done.");
-// }
-
-// async function tileCacheMatch(request) {
-//   var tile = await db.tiles.
-// }
-// test().catch(err => {
-//   console.error("Uh oh! " + err.stack);
-// });
-
-// const db = new Dexie('hellodb');
-// db.version(1).stores({
-//   tiles: '++id,url,tile',
-// });
-
-// const tileHandlerCb = async ({ url, event, params }) => {
-
-//   // cacheMatch
-//   let cachedTile = await db.tiles.filter(function (tile) {
-//     return tile.url === url.href;
-//   }).first()
-//   console.log(cachedTile)
-  
-//   // let response = await db.tiles.filter(function (tile) {
-//   //   return tile.url === url.href;
-//   // }).first()
-//   // console.log(response)
-  
-//   const response = await fetch(request);
-//   const responseBody = await response.text();
-//   return new Response(`${responseBody} <!-- Look Ma. Added Content. -->`, {
-//     headers: response.headers,
-//   });
-// };
-
-// class CacheMapTiles extends Strategy {
-//   async cacheMatch(input) {
-//     console.log('in cacheMatch')
-//     let url = input.url
-//     let response = await this._db.tiles.filter(tile => tile.url === url).first().catch((err) => console.log('db err', err))
-//     return response
-//   }
-
-//   async cachePut(handler, input, response) {
-//     console.log('in cachePut')
-//     // Run in the next task to avoid blocking other cache reads.
-//     await timeout(0);
-//     // const responseToCache = await handler._ensureResponseSafeToCache(response);
-//     console.log('toCache', response)
-//     await this._db.tiles.put({ url: input.url, tile: response })
-//   }
-
-//   async fetchAndCachePut(handler, input) {
-//     const response = await handler.fetch(input);
-//     console.log('feteched tile resp', response.blob, response.text, response.body)
-//     const responseClone = response.clone();
-//     // TODO save cloned response to our cache
-//     // await this.cachePut(handler, input, responseClone)
-//     console.log('clone in facp', responseClone)
-//     handler.waitUntil(this.cachePut(handler, input, response.blob));
-//     // this.cachePut(handler, input, responseClone)
-//     return response
-//   }
-
-//   constructor(options) {
-//     super(options);
-//     this._db = new Dexie('hellodb')
-//     this._db.version(1).stores({
-//       tiles: '++id,url,tile'
-//     })
-//   }
-
-//   async _handle(request, handler) {
-//     let response = await this.cacheMatch(request);
-//     let error;
-//     if (!response) {
-//       try {
-//         response = await this.fetchAndCachePut(handler, request);
-//       }
-//       catch (err) {
-//         error = err;
-//       }
-//       // TODO log got or error
-      
-      
-//     }
-//     else {
-//       // TODO log found a cached response
-//     }
-//     // TODO maybe log like CacheFirst
-//     if (!response) {
-//       throw new WorkboxError('no-response', { url: request.url, error })
-//     }
-//     return response;
-//   }
-// }
-
-
-const handler = async ({url, event, params}) => {
-  // Set up db
-  const db = new Dexie('hellodb')
-  db.version(3).stores({
-    tiles: '++id,url,tile'
-  })
-  
-  // check our 'cache'
-  let cached = await db.tiles.filter(tile => tile.url === url.href).first().catch((err) => console.log('db err', err))
+const saveTile = async ({ url, tile }) => {
+  let key = urlToCacheKey(url)
+  let cached;
+  cached = await db.tiles.where('coords').equals(key).first()
   if (cached) {
-    console.log('got cached', cached.tile)
-    // some how create response from this
-    return new Response(cached.tile.stream())
+    db.tiles.where('coords').equals(key).modify(t => {
+      t.accessed = new Date();
+      t.tile = tile;
+    })
   }
   else {
-    // recreate get and cache put
-    const networkedResponse = await fetch(url)
-    const clone = networkedResponse.clone()
-    console.log('fetched', clone)
-    const blob = await clone.blob()
-    // const blob = await streamToBlob(stream)
-    console.log('blob', blob)
-    db.tiles.put({ url: clone.url, tile: blob })
-    // TODO put the blob in the db
-    return networkedResponse
+    console.log('new tile: will put.')
+    db.tiles.put({ coords: key, accessed: new Date(), tile: tile })
   }
 }
 
+const updateTileAccessedDate = async (key) => {
+  db.tiles.where('coords').equals(key).modify(tile => {
+    tile.accessed = new Date();
+  });
+};
+
+// TODO use perhaps periodically to clear unused tiles after extended periods
+const removeExpiredTiles = async () => {
+  let threshold = new Date();
+  threshold = threshold.setTime(threshold.getTime() - (1000 * 30))  // XXX hardcoded value 
+  db.tiles.where('accessed').below(threshold).delete();
+};
+
+const urlToCacheKey = (url) => {
+  let segments = url.split('/').slice(-3);
+  let x = segments[0];
+  let y = segments[1];
+  let z = segments[2].split('.')[0];
+  return `x:${x}y:${y}z:${z}`
+}
+
+const expireCacheItems = async () => {};
+
+const cacheMatch = async ({ url, event }) => {
+  let cachedResponse;
+  let cached = await getTile(url)
+  if (cached) {
+    let threshold = new Date()
+    threshold = threshold.setTime(threshold.getTime() - (1000 * 30))  // XXX hardcoded value
+    if (cached.accessed < threshold) {
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(`Stale cache tile found. Will revalidate.`)
+      }
+      event.waitUntil(fetchAndCachePut({ url: url }))
+    }
+    else {
+      updateTileAccessedDate(cached.coords)
+    }
+    cachedResponse = new Response(cached.tile.stream())
+  }
+  if (process.env.NODE_ENV !== 'production') {
+    if (cachedResponse) {
+      console.log(`Found a cached map tile response.`);
+    }
+    else {
+      console.log(`No cached map tile response found.`);
+    }
+  }
+  return cachedResponse;
+};
+
+const cachePut = async ({ url, response }) => {
+  if (!response) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`Cannot cache non-existent response for ` +
+        `'${url}'.`);
+    }
+    throw new WorkboxError('cache-put-with-no-response', {
+      url: url,
+    });
+  }
+  // TODO here run any cache expiration checks
+  let responseToCache = await response.blob()
+  if (process.env.NODE_ENV !== 'production') {
+    console.log(`Updating the map tile cache with a new Response ` +
+      `for ${url}.`);
+  }
+  try {
+    await saveTile({ url: url, tile: responseToCache });
+  }
+  catch (error) {
+    if ((error.name === 'QuotaExceededError') ||
+      (error.inner && error.inner.name === 'QuotaExceededError')) {
+      // QuotaExceededError may occur as the inner error of an AbortError
+      console.error("QuotaExceeded error!");
+      // TODO run quota exceeded callback
+    } else {
+      // Any other error
+      console.error(error);
+    }
+    throw error;
+  }
+  return true;
+};
+
+const fetchAndCachePut = async ({ url }) => {
+  console.log("fetchAndPut")
+  const response = await fetch(url);
+  console.log('fetch resp', response)
+  const responseClone = response.clone();
+  await cachePut({ url: url, response: responseClone })
+  return response
+};
+
+const mapTileHandler = async ({ url, event, params }) => {
+  /* 
+   * This is a CacheFirst strategy using IndexedDB to hold 
+   * tile blobs since they can fill a normal cache far too 
+   * quickly. 
+   * 
+   * Perhaps there is way to do this cleanly by extending 
+   * a workbox Strategy but for now I'll manually recreate 
+   * a custom strategy and learn some things along the way.
+   * 
+   * Although in earlier commits you can find the same 
+   * work recreated in an extended Workbox Strategy, I 
+   * went this way since I'm not using cache storage.
+   * It could be done by probably overriding the handler 
+   * instead of the strategy since that is where the real 
+   * work is done to put contents into cache.
+   */
+  let response = await cacheMatch({ url: url.href, event: event });
+  let error;
+  if (!response) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`No response found in the cache. ` +
+        `Will respond with a network request.`);
+    }
+    try {
+      response = await fetchAndCachePut({ url: url.href })
+    }
+    catch (err) {
+      error = err;
+    }
+    if (process.env.NODE_ENV !== 'production') {
+      if (response) {
+        console.log(`Got response from network.`);
+      }
+      else {
+        console.log(`Unable to get a response from the network.`);
+      }
+    }
+  }
+  else {
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`Found a cached response in the map tile cache.`);
+    }
+  }
+  if (!response) {
+    throw new WorkboxError('no-response', { url: url.href, error });
+  }
+  return response;
+}
 
 registerRoute(
   ({ url }) => url.href.includes('tile.openstreetmap.org'),
-  handler,
-  // new CacheMapTiles(),
+  mapTileHandler,
 );
-
-// const matchTileReqFunction = ({ url, request, e }) => {
-//   return url.href.includes('tile.openstreetmap.org')}
-
-// class CacheTileStrategy extends Strategy {
-//   async _handle(request, handler) {
-//     // const fetchAndCachePutDone = handler.fetchAndCachePut(request);
-//     // const cacheMatchDone = handler.cacheMatch(request); 
-//     console.log(request)
-//     console.log(tileCacheDb)
-
-//     let key = request.url.split('/')
-//     console.log('fetching tile key', key)
-//     let response = await tileCacheDb.get(key)
-//     console.log('!!', response)
-//     // return new Promise((resolve, reject) => {
-//     //   fetchAndCachePutDone.then(resolve);
-//     //   cacheMatchDone.then((response) => response && resolve(response));
-      
-//     //   // Reject if both network and cache error or find no response.
-//     //   Promise.allSettled([fetchAndCachePutDone, cacheMatchDone]).then((results) => {
-//     //     const [fetchAndCachePutResult, cacheMatchResult] = results;
-//     //     if (fetchAndCachePutResult.status === 'rejected' && !cacheMatchResult.value) {
-//     //       reject(fetchAndCachePutResult.reason);
-//     //     }  
-//     //   });
-//     // });
-//   }
-// }
-
-// registerRoute(
-//   matchTileReqFunction,
-//   new CacheTileStrategy({
-//     cacheName: 'map-tiles-1',
-//     // plugins: [
-//     //   new CacheableResponsePlugin({
-//     //     status: [0, 200],
-//     //   }),
-//     //   new ExpirationPlugin({
-//     //     maxEntries: 50,
-//     //     maxAgeSeconds: 60,
-//     //   })
-//     // ]
-//   })
-// );
 
 // Not useful for our SPA I believe
 // // Cache page navigations (html) with a Network First strategy
@@ -321,25 +233,25 @@ registerRoute(
 //   }),
 // );
 
-// // Cache CSS, JS, and Web Worker requests with a Stale While Revalidate strategy
-// registerRoute(
-//   // Check to see if the request's destination is style for stylesheets, script for JavaScript, or worker for web worker
-//   ({ request }) =>
-//     request.destination === 'style' ||
-//     request.destination === 'script' ||
-//     request.destination === 'worker',
-//   // Use a Stale While Revalidate caching strategy
-//   new StaleWhileRevalidate({
-//     // Put all cached files in a cache named 'assets'
-//     cacheName: 'assets',
-//     plugins: [
-//       // Ensure that only requests that result in a 200 status are cached
-//       new CacheableResponsePlugin({
-//         statuses: [200],
-//       }),
-//     ],
-//   }),
-// );
+// Cache CSS, JS, and Web Worker requests with a Stale While Revalidate strategy
+registerRoute(
+  // Check to see if the request's destination is style for stylesheets, script for JavaScript, or worker for web worker
+  ({ request }) =>
+    request.destination === 'style' ||
+    request.destination === 'script' ||
+    request.destination === 'worker',
+  // Use a Stale While Revalidate caching strategy
+  new StaleWhileRevalidate({
+    // Put all cached files in a cache named 'assets'
+    cacheName: 'assets',
+    plugins: [
+      // Ensure that only requests that result in a 200 status are cached
+      new CacheableResponsePlugin({
+        statuses: [200],
+      }),
+    ],
+  }),
+);
 
 // // Cache images with a Cache First strategy
 // registerRoute(

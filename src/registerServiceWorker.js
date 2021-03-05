@@ -30,6 +30,8 @@ if (process.env.NODE_ENV === 'production') {
     },
     offline() {
       console.log('No internet connection found. App is running in offline mode.');
+      // Signal frontend that internet connection is lost
+      // document.dispatchEvent(new CustomEvent('swOffline'))
     },
     error(error) {
       console.error('Error during service worker registration:', error);
