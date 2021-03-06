@@ -1,4 +1,4 @@
-const { InjectManifest } = require('workbox-webpack-plugin')
+const { InjectManifest } = require('workbox-webpack-plugin');
 
 module.exports = {
   transpileDependencies: [
@@ -8,8 +8,8 @@ module.exports = {
     plugins: [
       new InjectManifest({
         swSrc: './src/service-worker-base.js',
-        swDest: 'service-worker.js'
-      })
-    ]
-  }
+        swDest: 'service-worker.js',
+      }),
+    ],
+  },
 };

@@ -10,6 +10,7 @@ Primarily a test ground to try some technologies I want to use for an app.
     [ ] learn to migrate database schema
     [x] expire map tiles (staleWhileValidate)
     [x] speed up cache retreival by using indexed key instead of filter
+    [ ] wrap console logs in checks if env === production
     [ ] handle cache full
 [x] WebPush
 [x] Map
@@ -17,6 +18,7 @@ Primarily a test ground to try some technologies I want to use for an app.
   [x] bounded area
   [x] max zoom out
   [x] loading bar across page for currently downloading tiles
+  [x] viewport marker list
 
 I want the app to work offline including the map tiles to be cached and preloaded.
 I want to be able to support pushing to the end user updates that they request.
@@ -24,21 +26,37 @@ I want to be able to support pushing to the end user updates that they request.
 
 ## Current task
 
-Bounding the map is easy but what is the difference between `bounds` and `maxBounds`?
-  - `bounds` attribute can support `.sync` modifier so perhaps I can use it as a rolling value to query for markers within my current view and show them as a list to select from in a menu
-  - `maxBounds` attribute is absolute limit of the map navigation. I'll limit it to an area I want to keep the user so their map can not travel freely anywhere and build up a considerable cache.
+Regardless of plugins it appears hundreds of markers is a burden and integrating leaflet marker canvas plugin into vue2-leaflet seems like an unecessary burden to setup and configure. I've begun to suspect when I started this project that leaflet is aging and not as popular as it used to be last time I made an app with it 4 years ago.
 
+Openlayers is compariable in size now and a lower level api that supports vector tiles which is one feature I want to have to help with bandwidth restrictions I face in my location. Plus it's good to expand my knowledge by learning a new framework. So I'm going to try open layers now.
 
-I now can cache map tiles. I need to handle when the cache throws quota limit exceeded error.
+Loading hundreds of markers makes the whole system laggy.
+  - Try marker cluster plugin
+  - Try marker canvas plugin
+  - Try creating polygons for different neighborhoods and only load markers within a selected neighborhood / or perhaps within a certain zoom level to limit markers and their popups. Read somewhere loading popups for each is expensive; not sure if Vue2Leaflet handles that or not.
+
+Working with Vuex to store nakamals list. TODO now is how to dispaly the currently selected 
+nakamal's data on the screen?
+  - Side bar with or without tabs
+    - Is a good idea but requires organizing data into a side bar nav or a custom card element that behaves like a navbar
+  - Bottom sheet again with or without tabs
+    - Another good choice but I would like the map to adjust to fit the space left over or it would cover the map on smaller screens
+  - Large popup with card embeded
+    - Maybe best for mobile and to show some details before committing to opening a full screen view on the mobile device
+  - Modal/Dialog
+    - I don't like covering the map but perhaps for mobile or after confirming to view additional details we open a dialog that blocks the map to focus on the details view.
+
+I also want to have search somewhere and show current list of nakamals in map bounds.
 
 
 ## Map Notes
 
 Vector tiles are what we want instead of raster tiles since we live in an area where bandwidth
 considerations are paramount. They require more CPU to render though but I'll take that instead 
-of consuming bandwidth and phone storage in IndexedDB.
+of consuming bandwidth and phone storage in IndexedDB. They also allow for custom colour themes 
+which would be great for a dark and light theme.
 
-[ ] Leaflet supports vector tiles non-natively - is there a newer alternative for vector tiles?
+[x] Leaflet supports vector tiles non-natively - is there a newer alternative for vector tiles?
   Seems leaflet is still good for me and fine, if I'm going to cache tiles then its okay if they 
   are bit larger than vectors since then users with weaker phones will be okay to view the map.
 Others:
@@ -48,6 +66,10 @@ Others:
 Loading bar
 https://openlayers.org/en/latest/examples/tile-load-events.html
 https://leafletjs.com/reference-1.7.1.html#tilelayer-loading
+
+Bounding the map is easy but what is the difference between `bounds` and `maxBounds`?
+  - `bounds` attribute can support `.sync` modifier so perhaps I can use it as a rolling value to query for markers within my current view and show them as a list to select from in a menu
+  - `maxBounds` attribute is absolute limit of the map navigation. I'll limit it to an area I want to keep the user so their map can not travel freely anywhere and build up a considerable cache.
 
 
 ## IndexedDB Notes

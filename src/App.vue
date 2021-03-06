@@ -1,11 +1,12 @@
 <template>
-  <v-app>
+  <v-app app>
     <SideBar></SideBar>
 
     <v-main>
       <button v-if="updateExists" @click="refreshApp">Update</button>
       <router-view></router-view>
     </v-main>
+
   </v-app>
 </template>
 

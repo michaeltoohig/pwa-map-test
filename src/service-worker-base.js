@@ -60,7 +60,6 @@ const saveTile = async ({ url, tile }) => {
     })
   }
   else {
-    console.log('new tile: will put.')
     db.tiles.put({ coords: key, accessed: new Date(), tile: tile })
   }
 }
@@ -93,7 +92,7 @@ const cacheMatch = async ({ url, event }) => {
   let cached = await getTile(url)
   if (cached) {
     let threshold = new Date()
-    threshold = threshold.setTime(threshold.getTime() - (1000 * 30))  // XXX hardcoded value
+    threshold = threshold.setTime(threshold.getTime() - (1000 * 60 * 60 * 24))  // XXX hardcoded value
     if (cached.accessed < threshold) {
       if (process.env.NODE_ENV !== 'production') {
         console.log(`Stale cache tile found. Will revalidate.`)
@@ -106,11 +105,13 @@ const cacheMatch = async ({ url, event }) => {
     cachedResponse = new Response(cached.tile.stream())
   }
   if (process.env.NODE_ENV !== 'production') {
-    if (cachedResponse) {
-      console.log(`Found a cached map tile response.`);
-    }
-    else {
-      console.log(`No cached map tile response found.`);
+    if (process.env.NODE_ENV !== 'production') {
+      if (cachedResponse) {
+        console.log(`Found a cached map tile response.`);
+      }
+      else {
+        console.log(`No cached map tile response found.`);
+      }
     }
   }
   return cachedResponse;
@@ -151,9 +152,7 @@ const cachePut = async ({ url, response }) => {
 };
 
 const fetchAndCachePut = async ({ url }) => {
-  console.log("fetchAndPut")
   const response = await fetch(url);
-  console.log('fetch resp', response)
   const responseClone = response.clone();
   await cachePut({ url: url, response: responseClone })
   return response
@@ -366,7 +365,6 @@ self.addEventListener('push', (e) => {
 
 // Could make click on the notification open our app
 self.addEventListener('notificationclick', (e) => {
-  console.log(e);
   if (e.action === 'some_action') {
     // Do something...
   } else {
