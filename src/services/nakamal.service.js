@@ -32,12 +32,12 @@ for (var a = [], i = 0; i < 40; ++i) a[i] = i;
 // http://stackoverflow.com/questions/962802#962890
 function getNakamalList() {
   let a = [];
-  for (i = 1; i < 300; ++i) {
+  for (i = 1; i < 40; ++i) {
     let n = {};
     n.id = i;
     n.name = `Kava Bar ${i}`;
-    n.lat = (Math.random() * (-17.68 - -17.9) + -17.9).toFixed(4);
-    n.lng = (Math.random() * (168.45 - 168.25) + 168.25).toFixed(4);
+    n.lat = parseFloat((Math.random() * (-17.68 - -17.9) + -17.9).toFixed(4));
+    n.lng = parseFloat((Math.random() * (168.45 - 168.25) + 168.25).toFixed(4));
     n.avatar = `https://picsum.photos/id/2000/${i}`;
     a.push(n);
   }

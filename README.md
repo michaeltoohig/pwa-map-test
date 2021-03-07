@@ -10,15 +10,15 @@ Primarily a test ground to try some technologies I want to use for an app.
     [ ] learn to migrate database schema
     [x] expire map tiles (staleWhileValidate)
     [x] speed up cache retreival by using indexed key instead of filter
-    [ ] wrap console logs in checks if env === production
+    [x] wrap console logs in checks if env === production
     [ ] handle cache full
 [x] WebPush
-[x] Map
+[x] Transition to OpenLayers map (features to re-implement)
   [ ] dark theme map design
-  [x] bounded area
-  [x] max zoom out
-  [x] loading bar across page for currently downloading tiles
-  [x] viewport marker list
+  [ ] bounded area
+  [ ] max zoom out
+  [ ] loading bar across page for currently downloading tiles
+  [ ] viewport marker list
 
 I want the app to work offline including the map tiles to be cached and preloaded.
 I want to be able to support pushing to the end user updates that they request.
@@ -26,9 +26,11 @@ I want to be able to support pushing to the end user updates that they request.
 
 ## Current task
 
-Regardless of plugins it appears hundreds of markers is a burden and integrating leaflet marker canvas plugin into vue2-leaflet seems like an unecessary burden to setup and configure. I've begun to suspect when I started this project that leaflet is aging and not as popular as it used to be last time I made an app with it 4 years ago.
+I'll leave this branch here for future attempts but openlayers is not a pancea to my problem and infact is unnecessarily more complex than I require.
 
-Openlayers is compariable in size now and a lower level api that supports vector tiles which is one feature I want to have to help with bandwidth restrictions I face in my location. Plus it's good to expand my knowledge by learning a new framework. So I'm going to try open layers now.
+Openlayers or Leaflet have performance issues related to displaying hundreds of markers which is primarily and issue of Vue's reactivity. Therefore the proper solution seems to be using GeoJSON Features instead of a giant list of individual markers. Then make sure that list of GeoJSON features is outside the scope of Vue so it remains frozen. We are not updating locations or moving features much so it is okay.
+
+Lastly, I should try to map the neighborhoods of town and then at a high zoom level only display the neighborhoods and their names + number of features within. At lower zoom levels we can show the actual markers.
 
 Loading hundreds of markers makes the whole system laggy.
   - Try marker cluster plugin

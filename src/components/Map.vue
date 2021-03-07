@@ -1,67 +1,47 @@
+/* eslint-disable */
+
 <template>
   <v-container
     fluid
     id="map-wrapper"
     class="pa-0"
   >
-    <l-map
-      style="z-index: 0;"
+    <vl-map
       ref="map"
-      v-if="showMap"
-      :zoom="zoom"
-      :min-zoom="minZoom"
-      :center="center"
-      :bounds="bounds"
-      :max-bounds="maxBounds"
-      :options="mapOptions"
-      @update:bounds="setBounds"
-      @update:center="centerUpdate"
-      @update:zoom="zoomUpdate"
+      map-projection="EPSG:4326"
+      :load-tiles-while-animating="true"
+      :load-tiles-while-interacting="true"
+      style=""
     >
-      <l-tile-layer
-        :url="url"
-        :attribution="attribution"
-        @tileloadstart="mapTileLoading += 1"
-        @tileload="mapTileLoaded += 1"
-        @loading="mapLoading = true"
-        @load="tileLoadComplete"
-      />
+      <vl-view
+        :zoom.sync="zoom"
+        :center.sync="center"
+        :rotation.sync="rotation"
+      ></vl-view>
 
-      <Vue2LeafletMarkerCluster>
-        <l-marker
-          v-for="nakamal in nakamals"
-          :key="nakamal.id"
-          :icon="icon"
-          :lat-lng="nakamal.latLng"
-          @click="markerClick(nakamal.id)"
-        >
-          <l-popup :options="{ offset: popupOffset }">
-            <h3 class="mb-2 font-weight-bold">{{ nakamal.name }}</h3>
-            <ul class="mb-2 font-weight-light">
-              <li>Contact: John Frum</li>
-              <li>Number: 7444332</li>
-            </ul>
-            <v-btn small block outlined color="primary" @click="bottomSheet = true">Details</v-btn>
-          </l-popup>
-        </l-marker>
-      </Vue2LeafletMarkerCluster>
+      <vl-layer-tile id="osm">
+        <vl-source-osm></vl-source-osm>
+      </vl-layer-tile>
 
-      <l-control
-        :position="'bottomleft'"
-        class="example-custom-control"
+      <vl-layer-vector id="points" render-mode="image" :visible="visibleLayer === 'points'">
+        <vl-source-vector :features="features"></vl-source-vector>
+      </vl-layer-vector>
+
+      <vl-interaction-select :features.sync="selectedFeatures" />
+
+      <vl-overlay
+        v-for="feature in selectedFeatures"
+        :key="feature.id"
+        :id="'popup-' + feature.id"
+        :position="findPointOnSurface(feature)"
       >
-        <v-card
-          width="400"
-          mr-3
-          mt-3
-        >
-          <v-card-text>
-            <p>Center: {{ currentCenter }} zoom: {{ currentZoom }} bounds: {{ bounds }}</p>
-          </v-card-text>
-        </v-card>
-      </l-control>
+        <div>
+          ID {{ feature.id }}<br>
+          Name {{ feature.properties.name }}
+        </div>
+      </vl-overlay>
 
-    </l-map>
+    </vl-map>
 
     <v-progress-linear
       :active="mapLoading"
@@ -110,13 +90,7 @@ import {
   mapActions,
   mapGetters,
 } from 'vuex';
-import {
-  icon, latLng, latLngBounds, point,
-} from 'leaflet';
-import {
-  LMap, LTileLayer, LMarker, LPopup, LTooltip, LControl,
-} from 'vue2-leaflet';
-import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster'
+import pointOnFeature from '@turf/point-on-feature';
 import BoundedNakamals from '@/components/BoundedNakamals.vue';
 
 const iconPath = require('../assets/map-marker.svg');
@@ -125,45 +99,37 @@ export default {
   name: 'Map',
   components: {
     BoundedNakamals,
-    Vue2LeafletMarkerCluster,
-    LMap,
-    LTileLayer,
-    LMarker,
-    LPopup,
-    LTooltip,
-    LControl,
   },
   data() {
     return {
-      zoom: 14.5,
+      selectedFeatures: [],
+      currentZoom: 14.5,
       minZoom: 12,
-      center: latLng(-17.741526, 168.312024),
-      bounds: latLngBounds([
-        [-17.667, 168.21],
-        [-17.830, 168.47],
-      ]),
-      maxBounds: latLngBounds([
-        [-17.667, 168.21],
-        [-17.830, 168.47],
-      ]),
+      zoom: 14,
+      center: [parseFloat(168.312024), parseFloat(-17.741526)],
+      rotation: 0,
+      // bounds: latLngBounds([
+      //   [-17.667, 168.21],
+      //   [-17.830, 168.47],
+      // ]),
+      // maxBounds: latLngBounds([
+      //   [-17.667, 168.21],
+      //   [-17.830, 168.47],
+      // ]),
       url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       attribution:
         '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-      withPopup: latLng(-17.751526, 168.2421994),
-      withTooltip: latLng(-17.748758, 168.308369),
-      currentZoom: 14.5,
-      currentCenter: latLng(-17.741526, 168.312024),
-      showParagraph: false,
-      mapOptions: {
-        zoomSnap: 0.5,
-      },
-      showMap: true,
-      popupOffset: point(0, -30),
-      icon: icon({
-        iconUrl: iconPath,
-        iconSize: [54, 44],
-        iconAnchor: [16, 40],
-      }),
+      // currentCenter: latLng(-17.741526, 168.312024),
+      // mapOptions: {
+      //   zoomSnap: 0.5,
+      // },
+      // popupOffset: point(0, -30),
+      iconSrc: iconPath,
+      // icon: icon({
+      //   iconUrl: iconPath,
+      //   iconSize: [54, 44],
+      //   iconAnchor: [16, 40],
+      // }),
       // Loading bar variables
       mapLoading: false,
       mapTileLoading: 0,
@@ -173,15 +139,36 @@ export default {
     };
   },
   computed: {
+    visibleLayer() {
+      return 'points';
+    },
     ...mapGetters({
       nakamals: 'nakamal/list',
     }),
+    features() {
+      return this.nakamals.map((n) => ({
+        type: 'Feature',
+        id: n.id,
+        geometry: {
+          type: 'Point',
+          coordinates: [parseFloat(n.lng), parseFloat(n.lat)],
+        },
+        properties: {
+          name: n.name,
+        },
+      }));
+    },
     tilesLoadingPercent() {
       if (!this.mapLoading) return 100;
       return Math.round((this.mapTileLoaded / this.mapTileLoading) * 100);
     },
   },
   methods: {
+    findPointOnSurface(feature) {
+      const point = pointOnFeature(feature);
+
+      return point.geometry.coordinates;
+    },
     ...mapActions('map', [
       'setBounds',
     ]),

@@ -2,9 +2,6 @@
 
 import Vue from 'vue';
 import nakamalService from '@/services/nakamal.service';
-import {
-  latLng,
-} from 'leaflet';
 
 const state = {
   byId: {},
@@ -44,12 +41,7 @@ const actions = {
 
 const mutations = {
   add: (state, item) => {
-    let i = {
-      ...item,
-      latLng: latLng(item.lat, item.lng),
-    };
-    console.log(i);
-    Vue.set(state.byId, item.id, i);
+    Vue.set(state.byId, item.id, item);
     if (state.allIds.includes(item.id)) return;
     state.allIds.push(item.id);
   },
