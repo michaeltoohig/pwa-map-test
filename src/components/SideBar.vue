@@ -2,36 +2,35 @@
   <div>
   <v-navigation-drawer
     v-model="drawer"
-    class="secondary"
-    temporary
-    hide-overlay
-    clipped
+    permanent
     app
   >
-      <!-- stuff perhaps a `nearby/in veiwport` list
-      so it only calculates whats in the view port when open -->
-
       <!-- I think this serves best as an actual menu to navigate
       save a FAB or something to open up a right side list of
       kava bars in the viewport -->
-    <v-list>
-      <v-list-item
-        v-for="item in items"
-        :key="item.title"
-        :to="item.link"
-      >
-        <v-list-item-icon>
-          <v-icon>{{ item.icon }}</v-icon>
-        </v-list-item-icon>
-        <v-list-item-title>{{ item.title }}</v-list-item-title>
-      </v-list-item>
-    </v-list>
+    <v-layout justify-space-between column fill-height>
+      <v-list>
+        <v-list-item
+          v-for="item in items"
+          :key="item.title"
+          :to="item.link"
+        >
+          <v-list-item-icon>
+            <v-icon>{{ item.icon }}</v-icon>
+          </v-list-item-icon>
+          <v-list-item-title>{{ item.title }}</v-list-item-title>
+        </v-list-item>
+      </v-list>
+
+      <v-divider></v-divider>
+      <v-subheader>Nakamals in view</v-subheader>
+      <BoundedNakamalsList></BoundedNakamalsList>
+
+    </v-layout>
   </v-navigation-drawer>
 
   <v-app-bar
     app
-    dark
-    color="primary"
   >
     <v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>
 
@@ -52,8 +51,13 @@
 </template>
 
 <script>
+import BoundedNakamalsList from '@/components/BoundedNakamalsList.vue';
+
 export default {
   name: 'SideBar',
+  components: {
+    BoundedNakamalsList,
+  },
   data() {
     return {
       drawer: true,

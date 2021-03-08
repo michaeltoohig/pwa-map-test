@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 <template>
   <v-container
     fluid
@@ -27,7 +29,7 @@
         @load="tileLoadComplete"
       />
 
-      <Vue2LeafletMarkerCluster>
+      <Vue2LeafletMarkerCluster></Vue2LeafletMarkerCluster>
         <l-marker
           v-for="nakamal in nakamals"
           :key="nakamal.id"
@@ -44,7 +46,6 @@
             <v-btn small block outlined color="primary" @click="bottomSheet = true">Details</v-btn>
           </l-popup>
         </l-marker>
-      </Vue2LeafletMarkerCluster>
 
       <l-control
         :position="'bottomleft'"
@@ -100,8 +101,6 @@
       </v-sheet>
     </v-bottom-sheet>
 
-    <BoundedNakamals />
-
   </v-container>
 </template>
 
@@ -114,23 +113,20 @@ import {
   icon, latLng, latLngBounds, point,
 } from 'leaflet';
 import {
-  LMap, LTileLayer, LMarker, LPopup, LTooltip, LControl,
+  LMap, LTileLayer, LMarker, LPopup, LControl,
 } from 'vue2-leaflet';
-import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster'
-import BoundedNakamals from '@/components/BoundedNakamals.vue';
+import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster';
 
 const iconPath = require('../assets/map-marker.svg');
 
 export default {
   name: 'Map',
   components: {
-    BoundedNakamals,
     Vue2LeafletMarkerCluster,
     LMap,
     LTileLayer,
     LMarker,
     LPopup,
-    LTooltip,
     LControl,
   },
   data() {
@@ -191,7 +187,7 @@ export default {
     },
     markerClick(id) {
       const nakamal = this.nakamals.find((n) => n.id === id);
-      this.flyTo({ latlng: nakamal.latLng, zoom: 16 });
+      this.flyTo({ latlng: nakamal.latLng, zoom: 18 });
     },
     tileLoadComplete() {
       setTimeout(() => {

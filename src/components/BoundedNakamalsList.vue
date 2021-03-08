@@ -1,25 +1,17 @@
 <template>
-  <v-navigation-drawer
-    app
-    right
-    permanent
-    color="accent lighten-3"
+  <v-virtual-scroll
+    :items="boundNakamals"
+    :item-height="50"
   >
-    <v-list>
+    <template v-slot:default="{ item }">
       <v-list-item
-        v-for="nakamal in boundNakamals"
-        :key="nakamal.id"
-        @click="select(nakamal.id)"
+        :key="item"
+        @click="select(item.id)"
       >
-        <v-list-item-avatar>
-          <v-avatar
-            :src="nakamal.avatar"
-          ></v-avatar>
-        </v-list-item-avatar>
-        <v-list-item-title>{{ nakamal.name }}</v-list-item-title>
+        <v-list-item-title>{{ item.name }}</v-list-item-title>
       </v-list-item>
-    </v-list>
-  </v-navigation-drawer>
+    </template>
+  </v-virtual-scroll>
 </template>
 
 <script>
@@ -41,7 +33,7 @@ export default {
     select(id) {
       console.log('selected', id);
       const nakamal = this.nakamals.find((n) => n.id === id);
-      this.$root.$emit('fly-to', { latlng: nakamal.latLng, zoom: 16 });
+      this.$root.$emit('fly-to', { latlng: nakamal.latLng, zoom: 18 });
     },
   },
 };
