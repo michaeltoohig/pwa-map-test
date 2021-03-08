@@ -12,6 +12,7 @@ Primarily a test ground to try some technologies I want to use for an app.
     [x] speed up cache retreival by using indexed key instead of filter
     [ ] wrap console logs in checks if env === production
     [ ] handle cache full
+    [ ] background sync or something to update backend when back online
 [x] WebPush
 [x] Map
   [ ] dark theme map design
@@ -19,6 +20,8 @@ Primarily a test ground to try some technologies I want to use for an app.
   [x] max zoom out
   [x] loading bar across page for currently downloading tiles
   [x] viewport marker list
+  [ ] search bar
+  [ ] add new marker dialog
 
 I want the app to work offline including the map tiles to be cached and preloaded.
 I want to be able to support pushing to the end user updates that they request.
@@ -26,16 +29,13 @@ I want to be able to support pushing to the end user updates that they request.
 
 ## Current task
 
-Regardless of plugins it appears hundreds of markers is a burden and integrating leaflet marker canvas plugin into vue2-leaflet seems like an unecessary burden to setup and configure. I've begun to suspect when I started this project that leaflet is aging and not as popular as it used to be last time I made an app with it 4 years ago.
+Restarting my computer seems to alleviated the performance issue I was facing. Openlayers had the same or worse performance issues prior to he restart as well. 
 
-Openlayers is compariable in size now and a lower level api that supports vector tiles which is one feature I want to have to help with bandwidth restrictions I face in my location. Plus it's good to expand my knowledge by learning a new framework. So I'm going to try open layers now.
+Search bar searches the store for nakamal by some attribute such as location or name. 
+Question becomes to I keep everything frontend? I believe I have to at least keep nakamal names, locations on frontend. Perhaps in future when opening more detailed
+information about a nakamal that would fetch from API then cache results for awhile. Any future plans for live updates would be websockets or something along those lines 
+to just make an event occur on the map but only when it is live.
 
-Loading hundreds of markers makes the whole system laggy.
-  - Try marker cluster plugin
-  - Try marker canvas plugin
-  - Try creating polygons for different neighborhoods and only load markers within a selected neighborhood / or perhaps within a certain zoom level to limit markers and their popups. Read somewhere loading popups for each is expensive; not sure if Vue2Leaflet handles that or not.
-
-Working with Vuex to store nakamals list. TODO now is how to dispaly the currently selected 
 nakamal's data on the screen?
   - Side bar with or without tabs
     - Is a good idea but requires organizing data into a side bar nav or a custom card element that behaves like a navbar
@@ -45,8 +45,6 @@ nakamal's data on the screen?
     - Maybe best for mobile and to show some details before committing to opening a full screen view on the mobile device
   - Modal/Dialog
     - I don't like covering the map but perhaps for mobile or after confirming to view additional details we open a dialog that blocks the map to focus on the details view.
-
-I also want to have search somewhere and show current list of nakamals in map bounds.
 
 
 ## Map Notes

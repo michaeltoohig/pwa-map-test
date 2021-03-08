@@ -139,7 +139,7 @@ export default {
         [-17.830, 168.47],
       ]),
       maxBounds: latLngBounds([
-        [-17.667, 168.21],
+        [-17.627, 168.11],
         [-17.830, 168.47],
       ]),
       url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
