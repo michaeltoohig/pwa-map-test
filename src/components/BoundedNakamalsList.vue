@@ -5,7 +5,7 @@
   >
     <template v-slot:default="{ item }">
       <v-list-item
-        :key="item"
+        :key="item.id"
         @click="select(item.id)"
       >
         <v-list-item-title>{{ item.name }}</v-list-item-title>
@@ -31,7 +31,6 @@ export default {
   },
   methods: {
     select(id) {
-      console.log('selected', id);
       const nakamal = this.nakamals.find((n) => n.id === id);
       this.$root.$emit('fly-to', { latlng: nakamal.latLng, zoom: 18 });
     },

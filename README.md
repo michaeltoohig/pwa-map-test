@@ -3,7 +3,8 @@
 Primarily a test ground to try some technologies I want to use for an app.
 
 [x] PWA
-  [ ] work and load page while offline
+  [x] work and load page while offline
+    [ ] alert user they are offline or back online
   [x] update popup UI
   [x] cache static files such as fonts
   [x] cache map tiles
@@ -14,6 +15,7 @@ Primarily a test ground to try some technologies I want to use for an app.
     [ ] handle cache full
     [ ] background sync or something to update backend when back online
 [x] WebPush
+  [ ] relook at `sw-push.js` and check all those events are up to date with current browsers and how I've implemented them
 [x] Map
   [ ] dark theme map design
   [x] bounded area
@@ -30,6 +32,11 @@ I want to be able to support pushing to the end user updates that they request.
 ## Current task
 
 Restarting my computer seems to alleviated the performance issue I was facing. Openlayers had the same or worse performance issues prior to he restart as well. 
+
+NOTE: I've realized I've begun developing my app in this repo that should focus on learning and developing PWA and Leaflet skills so I'll migrate that code out in the 
+future into a repo built upon lessons here.
+Although, some skills related to PWA are still revelant to below such as delayed API updates when offline so I'll continue here for a bit more before I leave this 
+repo as a proof of concept and begin the app.
 
 Search bar searches the store for nakamal by some attribute such as location or name. 
 Question becomes to I keep everything frontend? I believe I have to at least keep nakamal names, locations on frontend. Perhaps in future when opening more detailed

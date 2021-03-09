@@ -29,8 +29,8 @@ const getters = {
 const actions = {
   load: async ({ commit }) => {
     const nakamals = await nakamalService.get();
-    nakamals.forEach((item) => {
-      commit('add', item);
+    nakamals.forEach((item, index) => {
+      commit('add', { item, index });
       // // Normalize nested data and swap the author object
       // // in the API response with an ID reference.
       // commit('add', normalizeRelations(item, ['author']));
@@ -43,15 +43,15 @@ const actions = {
 };
 
 const mutations = {
-  add: (state, item) => {
+  add: (state, { item, index }) => {
     let i = {
       ...item,
+      id: index,
       latLng: latLng(item.lat, item.lng),
     };
-    console.log(i);
-    Vue.set(state.byId, item.id, i);
-    if (state.allIds.includes(item.id)) return;
-    state.allIds.push(item.id);
+    Vue.set(state.byId, i.id, i);
+    if (state.allIds.includes(i.id)) return;
+    state.allIds.push(i.id);
   },
 };
 
