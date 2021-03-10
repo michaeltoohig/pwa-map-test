@@ -2,6 +2,7 @@
   <v-virtual-scroll
     :items="boundNakamals"
     :item-height="50"
+    height="300px"
   >
     <template v-slot:default="{ item }">
       <v-list-item

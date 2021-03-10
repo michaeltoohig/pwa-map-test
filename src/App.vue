@@ -1,5 +1,5 @@
 <template>
-  <v-app app>
+  <v-app>
     <SideBar></SideBar>
 
     <v-main>

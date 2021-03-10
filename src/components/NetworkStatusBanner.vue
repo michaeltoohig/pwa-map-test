@@ -1,10 +1,13 @@
 <template>
   <div>
     <v-banner
-      v-model="isOffline"
+      :value="isOffline"
       single-line
+      color="info"
       @click:icon="alert"
+      min-width="100%"
       transition="slide-y-transition"
+      style="position: absolute; z-index: 7001;"
     >
       <v-icon
         slot="icon"
@@ -13,8 +16,7 @@
       >
         mdi-wifi-strength-alert-outline
       </v-icon>
-      Internet Connection Lost
-
+      Internet Connection Lost.
       <template v-slot:actions="{ dismiss }">
         <v-btn
           text
@@ -35,6 +37,7 @@
       v-model="onlineBanner"
       single-line
       transition="slide-y-transition"
+      style="position: absolute; z-index: 3001;"
     >
       <v-icon
         slot="icon"
@@ -79,11 +82,6 @@ export default {
     alert() {
       alert('bad internet');
     },
-  },
-  mounted() {
-    window.addEventListener('load', () => {
-      console.log(this.isOnline, this.isOffline);
-    });
   },
 };
 </script>

@@ -1,17 +1,17 @@
 <template>
   <div class="home">
-    <Map msg="Welcome to Your Vue.js App"/>
+    <NakamalMap></NakamalMap>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import Map from '@/components/Map.vue';
+import NakamalMap from '@/components/NakamalMap.vue';
 
 export default {
   name: 'Home',
   components: {
-    Map,
+    NakamalMap,
   },
 };
 </script>

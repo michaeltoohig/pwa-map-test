@@ -9,7 +9,6 @@
     <l-map
       style="z-index: 0;"
       ref="map"
-      v-if="showMap"
       :zoom="zoom"
       :min-zoom="minZoom"
       :center="center"
@@ -48,28 +47,6 @@
         </l-marker>
 
       <l-control
-      >
-        <v-toolbar
-          dense
-          floating
-        >
-          <v-text-field
-            hide-details
-            prepend-icon="mdi-magnify"
-            single-line
-          ></v-text-field>
-
-          <v-btn icon>
-            <v-icon>mdi-crosshairs-gps</v-icon>
-          </v-btn>
-
-          <v-btn icon>
-            <v-icon>mdi-dots-vertical</v-icon>
-          </v-btn>
-        </v-toolbar>
-      </l-control>
-
-      <l-control
         :position="'bottomleft'"
         class="example-custom-control"
       >
@@ -84,6 +61,47 @@
         </v-card>
       </l-control>
 
+      <l-control
+        :position="'bottomright'"
+        class="fab--example"
+      >
+        <v-dialog
+          transition="dialog-bottom-transition"
+          max-width="600"
+        >
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              color="primary"
+              fab
+              large
+              dark
+              bottom
+              left
+              v-bind="attrs"
+              v-on="on"
+            >
+              <v-icon>mdi-magnify</v-icon>
+            </v-btn>
+          </template>
+          <template v-slot:default="dialog">
+            <v-card>
+              <v-toolbar
+                color="primary"
+                dark
+              >Opening from the bottom</v-toolbar>
+              <v-card-text>
+                <div class="text-h2 pa-12">Hello world!</div>
+              </v-card-text>
+              <v-card-actions class="justify-end">
+                <v-btn
+                  text
+                  @click="dialog.value = false"
+                >Close</v-btn>
+              </v-card-actions>
+            </v-card>
+          </template>
+        </v-dialog>
+      </l-control>
     </l-map>
 
     <v-progress-linear
@@ -138,12 +156,14 @@ import {
   LMap, LTileLayer, LMarker, LPopup, LControl,
 } from 'vue2-leaflet';
 import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster';
+// import NetworkStatusBanner from '@/components/NetworkStatusBanner.vue';
 
 const iconPath = require('../assets/map-marker.svg');
 
 export default {
-  name: 'Map',
+  name: 'NakamalMap',
   components: {
+    // NetworkStatusBanner,
     Vue2LeafletMarkerCluster,
     LMap,
     LTileLayer,
@@ -153,7 +173,7 @@ export default {
   },
   data() {
     return {
-      zoom: 14.5,
+      zoom: 18,
       minZoom: 12,
       center: latLng(-17.741526, 168.312024),
       bounds: latLngBounds([
@@ -169,13 +189,12 @@ export default {
         '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
       withPopup: latLng(-17.751526, 168.2421994),
       withTooltip: latLng(-17.748758, 168.308369),
-      currentZoom: 14.5,
+      currentZoom: 18,
       currentCenter: latLng(-17.741526, 168.312024),
       showParagraph: false,
       mapOptions: {
         zoomSnap: 0.5,
       },
-      showMap: true,
       popupOffset: point(0, -30),
       icon: icon({
         iconUrl: iconPath,
@@ -204,7 +223,6 @@ export default {
       'setBounds',
     ]),
     flyTo({ latlng, zoom }) {
-      console.log(latlng, zoom);
       this.$refs.map.mapObject.flyTo(latlng, zoom);
     },
     markerClick(id) {
@@ -246,7 +264,7 @@ export default {
 <style scoped>
 #map-wrapper {
   width: 100%;
-  height: calc(100vh - 64px);
+  height: 100vh;
 }
 .example-custom-control > .v-card {
   z-index: 2000;
