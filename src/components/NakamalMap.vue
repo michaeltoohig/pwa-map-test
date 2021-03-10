@@ -65,32 +65,54 @@
         :position="'bottomright'"
         class="fab--example"
       >
+        <v-btn
+          color="primary"
+          fab
+          large
+          dark
+          bottom
+          left
+          @click="searchDialog = !searchDialog"
+        >
+          <v-icon>mdi-magnify</v-icon>
+        </v-btn>
         <v-dialog
+          v-model="searchDialog"
           transition="dialog-bottom-transition"
           max-width="600"
         >
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              color="primary"
-              fab
-              large
-              dark
-              bottom
-              left
-              v-bind="attrs"
-              v-on="on"
-            >
-              <v-icon>mdi-magnify</v-icon>
-            </v-btn>
-          </template>
           <template v-slot:default="dialog">
             <v-card>
               <v-toolbar
                 color="primary"
                 dark
-              >Opening from the bottom</v-toolbar>
+              >
+                Search
+              </v-toolbar>
               <v-card-text>
-                <div class="text-h2 pa-12">Hello world!</div>
+                <v-autocomplete
+                  :items="nakamals"
+                  :filter="customFilter"
+                  outlined
+                  color="white"
+                  item-value="id"
+                  item-text="name"
+                  label="Kava Bars"
+                  class="mt-2"
+                  @change="searchSelect"
+                >
+                  <template v-slot:item="data">
+                    <template>
+                      <v-list-item-avatar>
+                        <img :src="data.item.images.small">
+                      </v-list-item-avatar>
+                      <v-list-item-content>
+                        <v-list-item-title v-html="data.item.name"></v-list-item-title>
+                        <v-list-item-subtitle v-html="data.item.ownerName"></v-list-item-subtitle>
+                      </v-list-item-content>
+                    </template>
+                  </template>
+                </v-autocomplete>
               </v-card-text>
               <v-card-actions class="justify-end">
                 <v-btn
@@ -207,6 +229,7 @@ export default {
       mapTileLoaded: 0,
       // Bottom sheet
       bottomSheet: false,
+      searchDialog: false,
     };
   },
   computed: {
@@ -219,6 +242,18 @@ export default {
     },
   },
   methods: {
+    customFilter(item, queryText) {
+      const title = item.title.toLowerCase();
+      const owner = item.ownerName.toLowerCase();
+      const searchText = queryText.toLowerCase();
+      return title.indexOf(searchText) > -1 || owner.indexOf(searchText) > -1;
+    },
+    searchSelect(item) {
+      console.log('selected', item);
+      const nakamal = this.nakamals.find((n) => n.id === item);
+      this.flyTo({ latlng: nakamal.latLng, zoom: 18 });
+      this.searchDialog = false;
+    },
     ...mapActions('map', [
       'setBounds',
     ]),
