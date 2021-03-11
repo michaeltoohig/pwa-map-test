@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-import { latLng, latLngBounds } from 'leaflet';
+import { latLng } from 'leaflet';
 
 const initialState = () => ({
   bounds: null,

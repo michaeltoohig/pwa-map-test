@@ -28,18 +28,9 @@
         @load="tileLoadComplete"
       />
 
-      <l-marker v-if="newNakamal" :lat-lng="center" :icon="icon">
-        <l-tooltip :options="{
-          permanent: true,
-          interactive: true,
-          direction: 'top',
-          offset: [0, -40]
-        }">
-          <div @click="create">
-            <v-btn x-small text>Add New Kava Bar</v-btn>
-          </div>
-        </l-tooltip>
-      </l-marker>
+      <NewNakamalDialog
+        :show="newNakamalMarker"
+      ></NewNakamalDialog>
 
       <Vue2LeafletMarkerCluster></Vue2LeafletMarkerCluster>
       <l-marker
@@ -79,9 +70,20 @@
         class="fab--example"
       >
         <v-btn
+          color="secondary"
+          fab
+          dark
+          bottom
+          left
+          class="mr-2"
+          @click="newNakamalMarker = !newNakamalMarker"
+        >
+          <v-icon>mdi-plus</v-icon>
+        </v-btn>
+
+        <v-btn
           color="primary"
           fab
-          large
           dark
           bottom
           left
@@ -89,6 +91,7 @@
         >
           <v-icon>mdi-magnify</v-icon>
         </v-btn>
+
         <v-dialog
           v-model="searchDialog"
           transition="dialog-bottom-transition"
@@ -188,28 +191,27 @@ import {
   icon, latLngBounds, point,
 } from 'leaflet';
 import {
-  LMap, LTileLayer, LMarker, LPopup, LTooltip, LControl,
+  LMap, LTileLayer, LMarker, LPopup, LControl,
 } from 'vue2-leaflet';
 import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster';
-// import NetworkStatusBanner from '@/components/NetworkStatusBanner.vue';
+import NewNakamalDialog from '@/components/NewNakamalDialog.vue';
 
 const iconPath = require('../assets/map-marker.svg');
 
 export default {
   name: 'NakamalMap',
   components: {
-    // NetworkStatusBanner,
+    NewNakamalDialog,
     Vue2LeafletMarkerCluster,
     LMap,
     LTileLayer,
     LMarker,
     LPopup,
-    LTooltip,
     LControl,
   },
   data() {
     return {
-      newNakamal: true,
+      newNakamalMarker: false,
       // zoom: 18,
       // center: latLng(-17.741526, 168.312024),
       // bounds: latLngBounds([
@@ -301,12 +303,6 @@ export default {
     //   console.log(bounds);
     //   this.$store.dispatch('map/setBounds', bounds);
     // },
-    showLongText() {
-      this.showParagraph = !this.showParagraph;
-    },
-    create() {
-      console.log('Click create');
-    },
   },
   created() {
     this.$store.dispatch('nakamal/load');
