@@ -10,14 +10,14 @@
       style="z-index: 0;"
       ref="map"
       :zoom="zoom"
-      :min-zoom="minZoom"
       :center="center"
       :bounds="bounds"
       :max-bounds="maxBounds"
+      :min-zoom="minZoom"
       :options="mapOptions"
       @update:bounds="setBounds"
-      @update:center="centerUpdate"
-      @update:zoom="zoomUpdate"
+      @update:center="setCenter"
+      @update:zoom="setZoom"
     >
       <l-tile-layer
         :url="url"
@@ -28,23 +28,36 @@
         @load="tileLoadComplete"
       />
 
+      <l-marker v-if="newNakamal" :lat-lng="center" :icon="icon">
+        <l-tooltip :options="{
+          permanent: true,
+          interactive: true,
+          direction: 'top',
+          offset: [0, -40]
+        }">
+          <div @click="create">
+            <v-btn x-small text>Add New Kava Bar</v-btn>
+          </div>
+        </l-tooltip>
+      </l-marker>
+
       <Vue2LeafletMarkerCluster></Vue2LeafletMarkerCluster>
-        <l-marker
-          v-for="nakamal in nakamals"
-          :key="nakamal.id"
-          :icon="icon"
-          :lat-lng="nakamal.latLng"
-          @click="markerClick(nakamal.id)"
-        >
-          <l-popup :options="{ offset: popupOffset }">
-            <h3 class="mb-2 font-weight-bold">{{ nakamal.name }}</h3>
-            <ul class="mb-2 font-weight-light">
-              <li>Contact: John Frum</li>
-              <li>Number: 7444332</li>
-            </ul>
-            <v-btn small block outlined color="primary" @click="bottomSheet = true">Details</v-btn>
-          </l-popup>
-        </l-marker>
+      <l-marker
+        v-for="nakamal in nakamals"
+        :key="nakamal.id"
+        :icon="icon"
+        :lat-lng="nakamal.latLng"
+        @click="markerClick(nakamal.id)"
+      >
+        <l-popup :options="{ offset: popupOffset }">
+          <h3 class="mb-2 font-weight-bold">{{ nakamal.name }}</h3>
+          <ul class="mb-2 font-weight-light">
+            <li>Contact: John Frum</li>
+            <li>Number: 7444332</li>
+          </ul>
+          <v-btn small block outlined color="primary" @click="bottomSheet = true">Details</v-btn>
+        </l-popup>
+      </l-marker>
 
       <l-control
         :position="'bottomleft'"
@@ -56,7 +69,7 @@
           mt-3
         >
           <v-card-text>
-            <p>Center: {{ currentCenter }} zoom: {{ currentZoom }} bounds: {{ bounds }}</p>
+            <p>Center: {{ center }} zoom: {{ zoom }} bounds: {{ bounds }}</p>
           </v-card-text>
         </v-card>
       </l-control>
@@ -172,10 +185,10 @@ import {
   mapGetters,
 } from 'vuex';
 import {
-  icon, latLng, latLngBounds, point,
+  icon, latLngBounds, point,
 } from 'leaflet';
 import {
-  LMap, LTileLayer, LMarker, LPopup, LControl,
+  LMap, LTileLayer, LMarker, LPopup, LTooltip, LControl,
 } from 'vue2-leaflet';
 import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster';
 // import NetworkStatusBanner from '@/components/NetworkStatusBanner.vue';
@@ -191,17 +204,19 @@ export default {
     LTileLayer,
     LMarker,
     LPopup,
+    LTooltip,
     LControl,
   },
   data() {
     return {
-      zoom: 18,
+      newNakamal: true,
+      // zoom: 18,
+      // center: latLng(-17.741526, 168.312024),
+      // bounds: latLngBounds([
+      //   [-17.667, 168.21],
+      //   [-17.830, 168.47],
+      // ]),
       minZoom: 12,
-      center: latLng(-17.741526, 168.312024),
-      bounds: latLngBounds([
-        [-17.667, 168.21],
-        [-17.830, 168.47],
-      ]),
       maxBounds: latLngBounds([
         [-17.627, 168.11],
         [-17.830, 168.47],
@@ -209,11 +224,10 @@ export default {
       url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       attribution:
         '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-      withPopup: latLng(-17.751526, 168.2421994),
-      withTooltip: latLng(-17.748758, 168.308369),
-      currentZoom: 18,
-      currentCenter: latLng(-17.741526, 168.312024),
-      showParagraph: false,
+      // withPopup: latLng(-17.751526, 168.2421994),
+      // withTooltip: latLng(-17.748758, 168.308369),
+      // currentZoom: 18,
+      // currentCenter: latLng(-17.741526, 168.312024),
       mapOptions: {
         zoomSnap: 0.5,
       },
@@ -234,6 +248,9 @@ export default {
   },
   computed: {
     ...mapGetters({
+      bounds: 'map/bounds',
+      center: 'map/center',
+      zoom: 'map/zoom',
       nakamals: 'nakamal/list',
     }),
     tilesLoadingPercent() {
@@ -256,6 +273,8 @@ export default {
     },
     ...mapActions('map', [
       'setBounds',
+      'setCenter',
+      'setZoom',
     ]),
     flyTo({ latlng, zoom }) {
       this.$refs.map.mapObject.flyTo(latlng, zoom);
@@ -271,12 +290,12 @@ export default {
         this.mapTileLoaded = 0;
       }, 500);
     },
-    zoomUpdate(zoom) {
-      this.currentZoom = zoom;
-    },
-    centerUpdate(center) {
-      this.currentCenter = center;
-    },
+    // zoomUpdate(zoom) {
+    //   this.currentZoom = zoom;
+    // },
+    // centerUpdate(center) {
+    //   this.currentCenter = center;
+    // },
     // boundsUpdate(bounds) {
     //   console.log('setting bounds');
     //   console.log(bounds);
@@ -285,8 +304,8 @@ export default {
     showLongText() {
       this.showParagraph = !this.showParagraph;
     },
-    innerClick() {
-      console.log('Click!');
+    create() {
+      console.log('Click create');
     },
   },
   created() {

@@ -11,7 +11,8 @@ Primarily a test ground to try some technologies I want to use for an app.
     [ ] learn to migrate database schema
     [x] expire map tiles (staleWhileValidate)
     [x] speed up cache retreival by using indexed key instead of filter
-    [ ] wrap console logs in checks if env === production
+    [x] wrap console logs in checks if env === production
+    [ ] wrap console logs for failed fetch when offline
     [ ] handle cache full
     [ ] background sync or something to update backend when back online
 [x] WebPush
@@ -22,7 +23,7 @@ Primarily a test ground to try some technologies I want to use for an app.
   [x] max zoom out
   [x] loading bar across page for currently downloading tiles
   [x] viewport marker list
-  [ ] search bar
+  [x] search bar
   [ ] add new marker dialog
 
 I want the app to work offline including the map tiles to be cached and preloaded.
@@ -31,7 +32,7 @@ I want to be able to support pushing to the end user updates that they request.
 
 ## Current task
 
-Restarting my computer seems to alleviated the performance issue I was facing. Openlayers had the same or worse performance issues prior to he restart as well. 
+I should wrap the failed fetch requests when offline to prevent the logs. Also need to move more of the map functionality into the vuex store since interacting with nakamals on the map should be the same whether it is selected in the search bar or from the side bar but now they are different.
 
 NOTE: I've realized I've begun developing my app in this repo that should focus on learning and developing PWA and Leaflet skills so I'll migrate that code out in the 
 future into a repo built upon lessons here.

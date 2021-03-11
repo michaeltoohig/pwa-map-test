@@ -38,6 +38,8 @@ addEventListener('message', (event) => {
 
 /* Map Tile Caching */
 
+const tileValidSeconds = 60 * 60 * 24;
+
 // Setup the cache DB
 const db = new Dexie('map-tiles-cache');
 db.version(2).stores({
@@ -73,7 +75,7 @@ const updateTileAccessedDate = async (key) => {
 // TODO use perhaps periodically to clear unused tiles after extended periods
 const removeExpiredTiles = async () => {
   let threshold = new Date();
-  threshold = threshold.setTime(threshold.getTime() - (1000 * 30))  // XXX hardcoded value 
+  threshold = threshold.setTime(threshold.getTime() - (1000 * tileValidSeconds)) 
   db.tiles.where('accessed').below(threshold).delete();
 };
 
@@ -92,7 +94,7 @@ const cacheMatch = async ({ url, event }) => {
   let cached = await getTile(url)
   if (cached) {
     let threshold = new Date()
-    threshold = threshold.setTime(threshold.getTime() - (1000 * 60 * 60 * 24))  // XXX hardcoded value
+    threshold = threshold.setTime(threshold.getTime() - (1000 * tileValidSeconds))
     if (cached.accessed < threshold) {
       if (process.env.NODE_ENV !== 'production') {
         console.log(`Stale cache tile found. Will revalidate.`)
