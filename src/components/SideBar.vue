@@ -41,7 +41,7 @@
     </v-navigation-drawer>
 
     <v-app-bar
-      absolute
+      app
       dense
     >
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>

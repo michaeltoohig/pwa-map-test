@@ -292,7 +292,7 @@ export default {
 <style scoped>
 #map-wrapper {
   width: 100%;
-  height: 100vh;
+  height: calc(100vh - 50px);
 }
 .example-custom-control > .v-card {
   z-index: 2000;
