@@ -1,7 +1,9 @@
 <template>
+  <div>
     <v-navigation-drawer
       v-model="drawer"
-      permanent
+      :permanent="$vuetify.breakpoint.mdAndUp"
+      :temporary="!$vuetify.breakpoint.mdAndUp"
       app
     >
       <v-list-item>
@@ -37,9 +39,64 @@
 
       <v-divider></v-divider>
     </v-navigation-drawer>
+
+    <v-app-bar
+      absolute
+      dense
+    >
+      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+
+      <v-toolbar-title>Malokay</v-toolbar-title>
+
+      <v-spacer></v-spacer>
+
+      <v-btn icon @click="setShowSearch(true)">
+        <v-icon>mdi-magnify</v-icon>
+      </v-btn>
+
+      <v-menu
+        left
+        bottom
+      >
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+            icon
+            v-bind="attrs"
+            v-on="on"
+          >
+            <v-icon>mdi-dots-vertical</v-icon>
+          </v-btn>
+        </template>
+
+        <v-list>
+          <v-list-item
+            v-if="!showNewNakamalMarker"
+            @click="setShowNewNakamalMarker(true)"
+          >
+            <v-list-item-title>
+              Add New
+            </v-list-item-title>
+          </v-list-item>
+          <v-list-item
+            v-else
+            @click="setShowNewNakamalMarker(false)"
+          >
+            <v-list-item-title>
+              Cancel Add New
+            </v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+
+    </v-app-bar>
+  </div>
 </template>
 
 <script>
+import {
+  mapActions,
+  mapGetters,
+} from 'vuex';
 import BoundedNakamalsList from '@/components/BoundedNakamalsList.vue';
 
 export default {
@@ -49,7 +106,7 @@ export default {
   },
   data() {
     return {
-      drawer: true,
+      drawer: this.$vuetify.breakpoint.mdAndUp,
       items: [
         {
           title: 'Map',
@@ -63,6 +120,17 @@ export default {
         },
       ],
     };
+  },
+  computed: {
+    ...mapGetters({
+      showNewNakamalMarker: 'map/showNewNakamalMarker',
+    }),
+  },
+  methods: {
+    ...mapActions('map', [
+      'setShowNewNakamalMarker',
+      'setShowSearch',
+    ]),
   },
 };
 </script>
