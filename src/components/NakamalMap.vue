@@ -43,8 +43,8 @@
         <l-popup :options="{ offset: popupOffset }">
           <h3 class="mb-2 font-weight-bold">{{ nakamal.name }}</h3>
           <ul class="mb-2 font-weight-light">
-            <li>Contact: John Frum</li>
-            <li>Number: 7444332</li>
+            <li>Owner: {{ nakamal.ownerName || '-' }}</li>
+            <li>Number: {{ nakamal.ownerContact || '-' }}</li>
           </ul>
           <v-btn small block outlined color="primary" @click="bottomSheet = true">Details</v-btn>
         </l-popup>

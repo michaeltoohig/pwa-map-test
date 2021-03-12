@@ -38,6 +38,7 @@
               cols="12"
             >
               <v-text-field
+                v-model="name"
                 label="Name"
                 required
               ></v-text-field>
@@ -71,6 +72,7 @@
               sm="6"
             >
               <v-select
+                v-model="extras"
                 :items="[
                   'Food',
                   'Alcohol',
@@ -86,6 +88,7 @@
               sm="6"
             >
               <v-autocomplete
+                v-model="light"
                 :items="[
                   'White',
                   'Red',
@@ -158,16 +161,33 @@ export default {
         iconSize: [54, 44],
         iconAnchor: [16, 40],
       }),
+
+      name: '',
+      ownerName: '',
+      ownerContact: '',
+      light: null,
+      extras: [],
     };
   },
   computed: {
     ...mapGetters({
       center: 'map/center',
     }),
+    form() {
+      return {
+        name: this.name,
+        ownerName: this.ownerName,
+        ownerContact: this.ownerContact,
+        lat: this.center.lat,
+        lng: this.center.lng,
+        light: this.light,
+        extras: this.extras,
+      };
+    },
   },
   methods: {
     submit() {
-      console.log('Submit');
+      this.$store.dispatch('nakamal/add', this.form);
       this.dialog = false;
     },
   },
