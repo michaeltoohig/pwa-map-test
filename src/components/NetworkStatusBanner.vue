@@ -79,6 +79,7 @@ export default {
   },
   methods: {
     alert() {
+      // eslint-disable-next-line
       alert('bad internet');
     },
   },

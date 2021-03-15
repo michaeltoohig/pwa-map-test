@@ -61,18 +61,67 @@
         :position="'bottomright'"
         class="fab--example"
       >
-        <v-btn
-          v-show="showNewNakamalMarker"
-          color="secondary"
-          fab
-          dark
-          bottom
-          left
-          @click="setShowNewNakamalMarker(false)"
-          class="mr-2"
-        >
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
+        <v-fab-transition>
+          <v-btn
+            v-if="showNewNakamalMarker"
+            color="secondary"
+            fab
+            dark
+            bottom
+            left
+            @click="setShowNewNakamalMarker(false)"
+            class="mr-2"
+          >
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+          <v-speed-dial
+            v-else
+            v-model="fab"
+            bottom
+            right
+            transition="slide-y-reverse-transition"
+          >
+            <template v-slot:activator>
+              <v-btn
+                v-model="fab"
+                color="primary darken-2"
+                dark
+                fab
+              >
+                <v-icon v-if="fab">
+                  mdi-close
+                </v-icon>
+                <v-icon v-else>
+                  mdi-chevron-up
+                </v-icon>
+              </v-btn>
+            </template>
+            <v-btn
+              fab
+              dark
+              small
+              color="green"
+            >
+              <v-icon>mdi-pencil</v-icon>
+            </v-btn>
+            <v-btn
+              fab
+              dark
+              small
+              color="indigo"
+            >
+              <v-icon>mdi-plus</v-icon>
+            </v-btn>
+            <v-btn
+              fab
+              dark
+              small
+              color="red"
+            >
+              <v-icon>mdi-delete</v-icon>
+            </v-btn>
+          </v-speed-dial>
+        </v-fab-transition>
       </l-control>
     </l-map>
 
@@ -139,6 +188,7 @@ export default {
   },
   data() {
     return {
+      fab: false,
       // zoom: 18,
       // center: latLng(-17.741526, 168.312024),
       // bounds: latLngBounds([
@@ -186,6 +236,9 @@ export default {
       if (!this.mapLoading) return 100;
       return Math.round((this.mapTileLoaded / this.mapTileLoading) * 100);
     },
+    // activeFab() {
+    //   switch (this.mode)
+    // }
   },
   methods: {
     ...mapActions('map', [
