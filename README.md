@@ -3,8 +3,8 @@
 Primarily a test ground to try some technologies I want to use for an app.
 
 [x] PWA
-  [x] work and load page while offline
-    [ ] alert user they are offline or back online
+  [ ] work and load page while offline
+    [x] alert user they are offline or back online
   [x] update popup UI
   [x] cache static files such as fonts
   [x] cache map tiles
@@ -24,7 +24,7 @@ Primarily a test ground to try some technologies I want to use for an app.
   [x] loading bar across page for currently downloading tiles
   [x] viewport marker list
   [x] search bar
-  [ ] add new marker dialog
+  [x] add new marker dialog
 
 I want the app to work offline including the map tiles to be cached and preloaded.
 I want to be able to support pushing to the end user updates that they request.

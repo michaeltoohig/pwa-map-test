@@ -6,6 +6,8 @@ const initialState = () => ({
   bounds: null,
   center: latLng(-17.741526, 168.312024),
   zoom: 15,
+  showNewNakamalMarker: false,
+  showSearch: false,
 })
 
 const state = initialState()
@@ -20,6 +22,12 @@ const getters = {
   zoom: (state) => {
     return state.zoom;
   },
+  showNewNakamalMarker: (state) => {
+    return state.showNewNakamalMarker;
+  },
+  showSearch: (state) => {
+    return state.showSearch;
+  }
 };
 
 const actions = {
@@ -32,6 +40,12 @@ const actions = {
   setZoom: async ({ commit }, zoom) => {
     commit('setZoom', zoom);
   },
+  setShowNewNakamalMarker: async ({ commit }, show) => {
+    commit('setShowNewNakamalMarker', show);
+  },
+  setShowSearch: async ({ commit }, show) => {
+    commit('setShowSearch', show);
+  }
 };
 
 const mutations = {
@@ -49,6 +63,12 @@ const mutations = {
   },
   setZoom: (state, zoom) => {
     state.zoom = zoom;
+  },
+  setShowNewNakamalMarker: (state, show) => {
+    state.showNewNakamalMarker = show;
+  },
+  setShowSearch: (state, show) => {
+    state.showSearch = show;
   },
 };
 

@@ -29,7 +29,7 @@
       />
 
       <NewNakamalDialog
-        :show="newNakamalMarker"
+        :show="showNewNakamalMarker"
       ></NewNakamalDialog>
 
       <Vue2LeafletMarkerCluster></Vue2LeafletMarkerCluster>
@@ -55,75 +55,17 @@
         class="fab--example"
       >
         <v-btn
+          v-show="showNewNakamalMarker"
           color="secondary"
           fab
           dark
           bottom
           left
+          @click="setShowNewNakamalMarker(false)"
           class="mr-2"
-          @click="newNakamalMarker = !newNakamalMarker"
         >
-          <v-icon>mdi-plus</v-icon>
+          <v-icon>mdi-close</v-icon>
         </v-btn>
-
-        <v-btn
-          color="primary"
-          fab
-          dark
-          bottom
-          left
-          @click="searchDialog = !searchDialog"
-        >
-          <v-icon>mdi-magnify</v-icon>
-        </v-btn>
-
-        <v-dialog
-          v-model="searchDialog"
-          transition="dialog-bottom-transition"
-          max-width="600"
-        >
-          <template v-slot:default="dialog">
-            <v-card>
-              <v-toolbar
-                color="primary"
-                dark
-              >
-                Search
-              </v-toolbar>
-              <v-card-text>
-                <v-autocomplete
-                  :items="nakamals"
-                  :filter="customFilter"
-                  outlined
-                  color="white"
-                  item-value="id"
-                  item-text="name"
-                  label="Kava Bars"
-                  class="mt-2"
-                  @change="searchSelect"
-                >
-                  <template v-slot:item="data">
-                    <template>
-                      <v-list-item-avatar>
-                        <img :src="data.item.images.small">
-                      </v-list-item-avatar>
-                      <v-list-item-content>
-                        <v-list-item-title v-html="data.item.name"></v-list-item-title>
-                        <v-list-item-subtitle v-html="data.item.ownerName"></v-list-item-subtitle>
-                      </v-list-item-content>
-                    </template>
-                  </template>
-                </v-autocomplete>
-              </v-card-text>
-              <v-card-actions class="justify-end">
-                <v-btn
-                  text
-                  @click="dialog.value = false"
-                >Close</v-btn>
-              </v-card-actions>
-            </v-card>
-          </template>
-        </v-dialog>
       </l-control>
     </l-map>
 
@@ -134,6 +76,55 @@
       absolute
       top
     ></v-progress-linear>
+
+    <v-dialog
+      v-model="showSearch"
+      persistent
+      transition="dialog-bottom-transition"
+      max-width="600"
+    >
+      <v-card>
+        <v-toolbar
+          color="primary"
+          dark
+        >
+          Search
+        </v-toolbar>
+        <v-card-text>
+          <v-autocomplete
+            :items="nakamals"
+            :filter="customFilter"
+            outlined
+            color="white"
+            item-value="id"
+            item-text="name"
+            label="Kava Bars"
+            class="mt-2"
+            @change="searchSelect"
+          >
+            <template v-slot:item="data">
+              <template>
+                <v-list-item-avatar>
+                  <img :src="data.item.images.small">
+                </v-list-item-avatar>
+                <v-list-item-content>
+                  <v-list-item-title v-html="data.item.name"></v-list-item-title>
+                  <v-list-item-subtitle v-html="data.item.ownerName"></v-list-item-subtitle>
+                </v-list-item-content>
+              </template>
+            </template>
+          </v-autocomplete>
+        </v-card-text>
+        <v-card-actions class="justify-end">
+          <v-btn
+            text
+            @click="setShowSearch(false)"
+          >
+            Close
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
 
     <v-bottom-sheet
       v-model="bottomSheet"
@@ -196,7 +187,6 @@ export default {
   },
   data() {
     return {
-      newNakamalMarker: false,
       // zoom: 18,
       // center: latLng(-17.741526, 168.312024),
       // bounds: latLngBounds([
@@ -230,7 +220,6 @@ export default {
       mapTileLoaded: 0,
       // Bottom sheet
       bottomSheet: false,
-      searchDialog: false,
     };
   },
   computed: {
@@ -238,6 +227,8 @@ export default {
       bounds: 'map/bounds',
       center: 'map/center',
       zoom: 'map/zoom',
+      showNewNakamalMarker: 'map/showNewNakamalMarker',
+      showSearch: 'map/showSearch',
       nakamals: 'nakamal/list',
     }),
     tilesLoadingPercent() {
@@ -262,6 +253,8 @@ export default {
       'setBounds',
       'setCenter',
       'setZoom',
+      'setShowNewNakamalMarker',
+      'setShowSearch',
     ]),
     flyTo({ latlng, zoom }) {
       this.$refs.map.mapObject.flyTo(latlng, zoom);
@@ -299,7 +292,7 @@ export default {
 <style scoped>
 #map-wrapper {
   width: 100%;
-  height: 100vh;
+  height: calc(100vh - 50px);
 }
 .example-custom-control > .v-card {
   z-index: 2000;
