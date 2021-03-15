@@ -51,21 +51,6 @@
       </l-marker>
 
       <l-control
-        :position="'bottomleft'"
-        class="example-custom-control"
-      >
-        <v-card
-          width="400"
-          mr-3
-          mt-3
-        >
-          <v-card-text>
-            <p>Center: {{ center }} zoom: {{ zoom }} bounds: {{ bounds }}</p>
-          </v-card-text>
-        </v-card>
-      </l-control>
-
-      <l-control
         :position="'bottomright'"
         class="fab--example"
       >

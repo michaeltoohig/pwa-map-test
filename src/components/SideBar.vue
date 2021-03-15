@@ -1,7 +1,7 @@
 <template>
     <v-navigation-drawer
       v-model="drawer"
-      permanent
+      :permanent="$vuetify.breakpoint.mdAndUp"
       app
     >
       <v-list-item>
