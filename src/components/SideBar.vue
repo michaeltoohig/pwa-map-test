@@ -44,7 +44,10 @@
       app
       dense
     >
-      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon
+        v-show="!$vuetify.breakpoint.mdAndUp"
+        @click="drawer = !drawer"
+      ></v-app-bar-nav-icon>
 
       <v-toolbar-title>Malokay</v-toolbar-title>
 
@@ -87,7 +90,6 @@
           </v-list-item>
         </v-list>
       </v-menu>
-
     </v-app-bar>
   </div>
 </template>

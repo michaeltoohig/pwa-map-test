@@ -8,7 +8,7 @@ const initialState = () => ({
   zoom: 15,
   showNewNakamalMarker: false,
   showSearch: false,
-})
+});
 
 const state = initialState()
 

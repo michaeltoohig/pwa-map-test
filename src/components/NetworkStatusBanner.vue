@@ -69,7 +69,6 @@ export default {
       }
     },
     isOnline(newValue) {
-      console.log(this.isOnline, this.isOffline);
       if (newValue) {
         this.onlineBanner = true;
         setTimeout(() => {

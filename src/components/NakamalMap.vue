@@ -6,6 +6,14 @@
     id="map-wrapper"
     class="pa-0"
   >
+    <v-progress-linear
+      :active="mapLoading"
+      v-model="tilesLoadingPercent"
+      color="primary"
+      absolute
+      top
+    ></v-progress-linear>
+
     <l-map
       style="z-index: 0;"
       ref="map"
@@ -32,7 +40,6 @@
         :show="showNewNakamalMarker"
       ></NewNakamalDialog>
 
-      <Vue2LeafletMarkerCluster></Vue2LeafletMarkerCluster>
       <l-marker
         v-for="nakamal in nakamals"
         :key="nakamal.id"
@@ -69,62 +76,7 @@
       </l-control>
     </l-map>
 
-    <v-progress-linear
-      :active="mapLoading"
-      v-model="tilesLoadingPercent"
-      color="primary"
-      absolute
-      top
-    ></v-progress-linear>
-
-    <v-dialog
-      v-model="showSearch"
-      persistent
-      transition="dialog-bottom-transition"
-      max-width="600"
-    >
-      <v-card>
-        <v-toolbar
-          color="primary"
-          dark
-        >
-          Search
-        </v-toolbar>
-        <v-card-text>
-          <v-autocomplete
-            :items="nakamals"
-            :filter="customFilter"
-            outlined
-            color="white"
-            item-value="id"
-            item-text="name"
-            label="Kava Bars"
-            class="mt-2"
-            @change="searchSelect"
-          >
-            <template v-slot:item="data">
-              <template>
-                <v-list-item-avatar>
-                  <img :src="data.item.images.small">
-                </v-list-item-avatar>
-                <v-list-item-content>
-                  <v-list-item-title v-html="data.item.name"></v-list-item-title>
-                  <v-list-item-subtitle v-html="data.item.ownerName"></v-list-item-subtitle>
-                </v-list-item-content>
-              </template>
-            </template>
-          </v-autocomplete>
-        </v-card-text>
-        <v-card-actions class="justify-end">
-          <v-btn
-            text
-            @click="setShowSearch(false)"
-          >
-            Close
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <NakamalSearchDialog></NakamalSearchDialog>
 
     <v-bottom-sheet
       v-model="bottomSheet"
@@ -169,7 +121,7 @@ import {
 import {
   LMap, LTileLayer, LMarker, LPopup, LControl,
 } from 'vue2-leaflet';
-import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster';
+import NakamalSearchDialog from '@/components/NakamalSearchDialog.vue';
 import NewNakamalDialog from '@/components/NewNakamalDialog.vue';
 
 const iconPath = require('../assets/map-marker.svg');
@@ -177,8 +129,8 @@ const iconPath = require('../assets/map-marker.svg');
 export default {
   name: 'NakamalMap',
   components: {
+    NakamalSearchDialog,
     NewNakamalDialog,
-    Vue2LeafletMarkerCluster,
     LMap,
     LTileLayer,
     LMarker,
@@ -228,7 +180,6 @@ export default {
       center: 'map/center',
       zoom: 'map/zoom',
       showNewNakamalMarker: 'map/showNewNakamalMarker',
-      showSearch: 'map/showSearch',
       nakamals: 'nakamal/list',
     }),
     tilesLoadingPercent() {
@@ -237,24 +188,11 @@ export default {
     },
   },
   methods: {
-    customFilter(item, queryText) {
-      const title = item.title.toLowerCase();
-      const owner = item.ownerName.toLowerCase();
-      const searchText = queryText.toLowerCase();
-      return title.indexOf(searchText) > -1 || owner.indexOf(searchText) > -1;
-    },
-    searchSelect(item) {
-      console.log('selected', item);
-      const nakamal = this.nakamals.find((n) => n.id === item);
-      this.flyTo({ latlng: nakamal.latLng, zoom: 18 });
-      this.searchDialog = false;
-    },
     ...mapActions('map', [
       'setBounds',
       'setCenter',
       'setZoom',
       'setShowNewNakamalMarker',
-      'setShowSearch',
     ]),
     flyTo({ latlng, zoom }) {
       this.$refs.map.mapObject.flyTo(latlng, zoom);
