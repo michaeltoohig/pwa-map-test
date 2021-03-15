@@ -46,16 +46,18 @@
         :icon="icon"
         :lat-lng="nakamal.latLng"
         @click="markerClick(nakamal.id)"
-      >
-        <l-popup :options="{ offset: popupOffset }">
-          <h3 class="mb-2 font-weight-bold">{{ nakamal.name }}</h3>
+      ></l-marker>
+
+      <l-layer-group ref="nakamalPopup">
+        <l-popup :options="{ offset: popupOffset }" v-if="!!selectedNakamal">
+          <h3 class="mb-2 font-weight-bold">{{ selectedNakamal.name }}</h3>
           <ul class="mb-2 font-weight-light">
-            <li>Owner: {{ nakamal.ownerName || '-' }}</li>
-            <li>Number: {{ nakamal.ownerContact || '-' }}</li>
+            <li>Owner: {{ selectedNakamal.ownerName || '-' }}</li>
+            <li>Number: {{ selectedNakamal.ownerContact || '-' }}</li>
           </ul>
           <v-btn small block outlined color="primary" @click="bottomSheet = true">Details</v-btn>
         </l-popup>
-      </l-marker>
+      </l-layer-group>
 
       <l-control
         :position="'bottomright'"
@@ -168,7 +170,7 @@ import {
   icon, latLngBounds, point,
 } from 'leaflet';
 import {
-  LMap, LTileLayer, LMarker, LPopup, LControl,
+  LMap, LTileLayer, LMarker, LPopup, LControl, LLayerGroup,
 } from 'vue2-leaflet';
 import NakamalSearchDialog from '@/components/NakamalSearchDialog.vue';
 import NewNakamalDialog from '@/components/NewNakamalDialog.vue';
@@ -185,6 +187,7 @@ export default {
     LMarker,
     LPopup,
     LControl,
+    LLayerGroup,
   },
   data() {
     return {
@@ -231,6 +234,7 @@ export default {
       zoom: 'map/zoom',
       showNewNakamalMarker: 'map/showNewNakamalMarker',
       nakamals: 'nakamal/list',
+      selectedNakamal: 'nakamal/selected',
     }),
     tilesLoadingPercent() {
       if (!this.mapLoading) return 100;
@@ -251,8 +255,11 @@ export default {
       this.$refs.map.mapObject.flyTo(latlng, zoom);
     },
     markerClick(id) {
+      // Woah, fix this to use our store properly
       const nakamal = this.nakamals.find((n) => n.id === id);
       this.flyTo({ latlng: nakamal.latLng, zoom: 18 });
+      this.$store.dispatch('nakamal/select', id);
+      this.$refs.nakamalPopup.mapObject.openPopup(nakamal.latLng);
     },
     tileLoadComplete() {
       setTimeout(() => {
@@ -261,19 +268,8 @@ export default {
         this.mapTileLoaded = 0;
       }, 500);
     },
-    // zoomUpdate(zoom) {
-    //   this.currentZoom = zoom;
-    // },
-    // centerUpdate(center) {
-    //   this.currentCenter = center;
-    // },
-    // boundsUpdate(bounds) {
-    //   console.log('setting bounds');
-    //   console.log(bounds);
-    //   this.$store.dispatch('map/setBounds', bounds);
-    // },
   },
-  created() {
+  beforeMount() {
     this.$store.dispatch('nakamal/load');
     this.$root.$on('fly-to', this.flyTo);
   },

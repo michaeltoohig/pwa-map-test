@@ -6,10 +6,13 @@ import {
   latLng,
 } from 'leaflet';
 
-const state = {
+const initialState = () => ({
   byId: {},
   allIds: [],
-};
+  selectedId: null,
+});
+
+const state = initialState()
 
 const getters = {
   // // Return a single article with the given id.
@@ -23,6 +26,10 @@ const getters = {
   // Return a list of articles in the order of `allIds`.
   list: (state, getters) => {
     return state.allIds.map(id => getters.find(id));
+  },
+  selected: (state, getters) => {
+    if (state.selectedId === null) return;
+    return getters.find(state.selectedId);
   },
 };
 
@@ -42,11 +49,20 @@ const actions = {
   },
   add: async ({ commit }, payload) => {
     const nakamal = nakamalService.create(payload)
-    commit('add', nakamal)
-  }
+    commit('add', nakamal);
+  },
+  select: async ({ commit }, id) => {
+    commit('select', id);
+  },
 };
 
 const mutations = {
+  RESET (state) {
+    const newState = initialState();
+    Object.keys(newState).forEach(key => {
+      state[key] = newState[key];
+    });
+  },
   add: (state, item) => {
     let i = {
       ...item,
@@ -55,6 +71,9 @@ const mutations = {
     Vue.set(state.byId, i.id, i);
     if (state.allIds.includes(i.id)) return;
     state.allIds.push(i.id);
+  },
+  select: (state, id) => {
+    state.selectedId = id;
   },
 };
 
