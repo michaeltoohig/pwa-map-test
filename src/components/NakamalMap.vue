@@ -49,7 +49,10 @@
       ></l-marker>
 
       <l-layer-group ref="nakamalPopup">
-        <l-popup :options="{ offset: popupOffset }" v-if="!!selectedNakamal">
+        <l-popup
+          :options="{ offset: popupOffset }"
+          @popupclose="popupClosed"
+        >
           <h3 class="mb-2 font-weight-bold">{{ selectedNakamal.name }}</h3>
           <ul class="mb-2 font-weight-light">
             <li>Owner: {{ selectedNakamal.ownerName || '-' }}</li>
@@ -245,21 +248,29 @@ export default {
     // }
   },
   methods: {
-    ...mapActions('map', [
-      'setBounds',
-      'setCenter',
-      'setZoom',
-      'setShowNewNakamalMarker',
-    ]),
-    flyTo({ latlng, zoom }) {
+    ...mapActions(
+      'map', [
+        'setBounds',
+        'setCenter',
+        'setZoom',
+        'setShowNewNakamalMarker',
+      ],
+    ),
+    flyTo(latlng, zoom = 18) {
       this.$refs.map.mapObject.flyTo(latlng, zoom);
     },
+    flyToSelected() {
+      this.$refs.nakamalPopup.mapObject.openPopup(this.selectedNakamal.latLng);
+      this.flyTo(this.selectedNakamal.latLng);
+    },
     markerClick(id) {
-      // Woah, fix this to use our store properly
-      const nakamal = this.nakamals.find((n) => n.id === id);
-      this.flyTo({ latlng: nakamal.latLng, zoom: 18 });
-      this.$store.dispatch('nakamal/select', id);
-      this.$refs.nakamalPopup.mapObject.openPopup(nakamal.latLng);
+      this.$store.dispatch('nakamal/select', id)
+        .then(() => {
+          this.flyToSelected();
+        });
+    },
+    popupClosed() {
+      this.$store.dispatch('nakamal/unselect');
     },
     tileLoadComplete() {
       setTimeout(() => {
@@ -271,7 +282,7 @@ export default {
   },
   beforeMount() {
     this.$store.dispatch('nakamal/load');
-    this.$root.$on('fly-to', this.flyTo);
+    this.$root.$on('fly-to-selected', this.flyToSelected);
   },
 };
 </script>

@@ -35,7 +35,7 @@
 
       <v-divider></v-divider>
         <v-subheader>Nakamals in view</v-subheader>
-        <BoundedNakamalsList></BoundedNakamalsList>
+        <BoundedNakamalsList v-on:close-drawer="drawer = false"></BoundedNakamalsList>
 
       <v-divider></v-divider>
     </v-navigation-drawer>

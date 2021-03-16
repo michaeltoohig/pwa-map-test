@@ -73,11 +73,12 @@ export default {
       const searchText = queryText.toLowerCase();
       return title.indexOf(searchText) > -1 || owner.indexOf(searchText) > -1;
     },
-    searchSelect(item) {
-      console.log('selected', item);
-      const nakamal = this.nakamals.find((n) => n.id === item);
-      this.$root.$emit('fly-to', { latlng: nakamal.latLng, zoom: 18 });
-      this.setShowSearch(false);
+    searchSelect(id) {
+      this.$store.dispatch('nakamal/select', id)
+        .then(() => {
+          this.setShowSearch(false);
+          this.$root.$emit('fly-to-selected');
+        });
     },
   },
 };

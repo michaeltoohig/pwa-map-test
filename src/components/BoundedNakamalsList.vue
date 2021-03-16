@@ -9,6 +9,9 @@
         :key="item.id"
         @click="select(item.id)"
       >
+        <v-list-item-icon v-if="item.id === selectedNakamal">
+          <v-icon>mdi-star</v-icon>
+        </v-list-item-icon>
         <v-list-item-title>{{ item.name }}</v-list-item-title>
       </v-list-item>
     </template>
@@ -24,6 +27,7 @@ export default {
     ...mapGetters({
       bounds: 'map/bounds',
       nakamals: 'nakamal/list',
+      selectedNakamal: 'nakamal/selected',
     }),
     boundNakamals() {
       if (!this.bounds) return [];
@@ -32,8 +36,11 @@ export default {
   },
   methods: {
     select(id) {
-      const nakamal = this.nakamals.find((n) => n.id === id);
-      this.$root.$emit('fly-to', { latlng: nakamal.latLng, zoom: 18 });
+      this.$store.dispatch('nakamal/select', id)
+        .then(() => {
+          this.$emit('close-drawer');
+          this.$root.$emit('fly-to-selected');
+        });
     },
   },
 };

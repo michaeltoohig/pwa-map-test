@@ -28,7 +28,11 @@ const getters = {
     return state.allIds.map(id => getters.find(id));
   },
   selected: (state, getters) => {
-    if (state.selectedId === null) return;
+    if (state.selectedId === null) return {
+      name: '',
+      ownerName: '',
+      ownerContact: '',
+    };
     return getters.find(state.selectedId);
   },
 };
@@ -54,6 +58,9 @@ const actions = {
   select: async ({ commit }, id) => {
     commit('select', id);
   },
+  unselect: async ({ commit }) => {
+    commit('unselect');
+  },
 };
 
 const mutations = {
@@ -74,6 +81,9 @@ const mutations = {
   },
   select: (state, id) => {
     state.selectedId = id;
+  },
+  unselect: (state) => {
+    state.selectedId = null;
   },
 };
 
