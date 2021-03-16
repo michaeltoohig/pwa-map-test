@@ -3,9 +3,20 @@
     <SideBar></SideBar>
 
     <v-main>
-      <NetworkStatusBanner></NetworkStatusBanner>
-
-      <button v-if="updateExists" @click="refreshApp">Update</button>
+      <v-alert
+        v-if="updateExists"
+        type="primary"
+        style="position: absolute; z-index: 4000;"
+      >
+        <v-row align="center">
+          <v-col class="grow">
+            New Updates Available.
+          </v-col>
+          <v-col class="shrink" @click="refreshApp">
+            <v-btn>Update Now!</v-btn>
+          </v-col>
+        </v-row>
+      </v-alert>
 
       <router-view></router-view>
     </v-main>
@@ -15,18 +26,13 @@
 
 <script>
 import SideBar from '@/components/SideBar.vue';
-import NetworkStatusBanner from '@/components/NetworkStatusBanner.vue';
 import update from './mixins/update';
 
 export default {
   name: 'App',
   components: {
-    NetworkStatusBanner,
     SideBar,
   },
   mixins: [update],
-  data: () => ({
-    blogPost: 'https://www.blog.plint-sites.nl/how-to-add-push-notifications-to-a-progressive-web-app/',
-  }),
 };
 </script>

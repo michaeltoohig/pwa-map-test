@@ -1,3 +1,7 @@
+/* This mixin adds:
+ * - `refreshing`, `registartion`, `updateExists` data properties
+ * - `updateAvailable`, `refreshApp` methods
+ */
 export default {
   data() {
     return {

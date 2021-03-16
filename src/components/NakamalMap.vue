@@ -63,27 +63,27 @@
       </l-layer-group>
 
       <l-control
+        :position="'bottomleft'"
+      >
+        <NetworkStatusDialog></NetworkStatusDialog>
+      </l-control>
+
+      <l-control
         :position="'bottomright'"
-        class="fab--example"
       >
         <v-fab-transition>
           <v-btn
             v-if="showNewNakamalMarker"
             color="secondary"
-            fab
             dark
-            bottom
-            left
+            fab
             @click="setShowNewNakamalMarker(false)"
-            class="mr-2"
           >
             <v-icon>mdi-close</v-icon>
           </v-btn>
           <v-speed-dial
             v-else
             v-model="fab"
-            bottom
-            right
             transition="slide-y-reverse-transition"
           >
             <template v-slot:activator>
@@ -177,12 +177,14 @@ import {
 } from 'vue2-leaflet';
 import NakamalSearchDialog from '@/components/NakamalSearchDialog.vue';
 import NewNakamalDialog from '@/components/NewNakamalDialog.vue';
+import NetworkStatusDialog from '@/components/NetworkStatusDialog.vue';
 
 const iconPath = require('../assets/map-marker.svg');
 
 export default {
   name: 'NakamalMap',
   components: {
+    NetworkStatusDialog,
     NakamalSearchDialog,
     NewNakamalDialog,
     LMap,
@@ -257,7 +259,7 @@ export default {
       ],
     ),
     flyTo(latlng, zoom = 18) {
-      this.$refs.map.mapObject.flyTo(latlng, zoom);
+      this.$refs.map.mapObject.setView(latlng, zoom);
     },
     flyToSelected() {
       this.$refs.nakamalPopup.mapObject.openPopup(this.selectedNakamal.latLng);

@@ -100,11 +100,13 @@ import {
   mapGetters,
 } from 'vuex';
 import BoundedNakamalsList from '@/components/BoundedNakamalsList.vue';
+// import NetworkStatusFab from '@/components/NetworkStatusFab.vue';
 
 export default {
   name: 'SideBar',
   components: {
     BoundedNakamalsList,
+    // NetworkStatusFab,
   },
   data() {
     return {
