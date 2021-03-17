@@ -2,22 +2,34 @@
   <v-app>
     <SideBar></SideBar>
 
-    <v-main>
-      <v-alert
-        v-if="updateExists"
-        type="primary"
-        style="position: absolute; z-index: 4000;"
-      >
-        <v-row align="center">
-          <v-col class="grow">
-            New Updates Available.
-          </v-col>
-          <v-col class="shrink" @click="refreshApp">
-            <v-btn>Update Now!</v-btn>
-          </v-col>
-        </v-row>
-      </v-alert>
+    <div
+      style="position: absolute; z-index: 3001; width: 100%;"
+    >
+      <v-row>
+        <v-col justify="center">
+          <v-alert
+            v-if="updateExists"
+            class="mx-auto mt-4"
+            max-width="450"
+            type="info"
+            dark
+            prominent
+            transition="scale-transition"
+          >
+            <v-row align="center">
+              <v-col class="grow">
+                New Updates Available.
+              </v-col>
+              <v-col class="shrink">
+                <v-btn @click="refreshApp">Update Now!</v-btn>
+              </v-col>
+            </v-row>
+          </v-alert>
+        </v-col>
+      </v-row>
+    </div>
 
+    <v-main>
       <router-view></router-view>
     </v-main>
 
