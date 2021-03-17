@@ -58,7 +58,15 @@
             <li>Owner: {{ selectedNakamal.ownerName || '-' }}</li>
             <li>Number: {{ selectedNakamal.ownerContact || '-' }}</li>
           </ul>
-          <v-btn small block outlined color="primary" @click="bottomSheet = true">Details</v-btn>
+          <v-btn
+            small
+            block
+            outlined
+            color="primary"
+            @click="setShowDetails(true)"
+          >
+            Details
+          </v-btn>
         </l-popup>
       </l-layer-group>
 
@@ -132,35 +140,7 @@
 
     <NakamalSearchDialog></NakamalSearchDialog>
 
-    <v-bottom-sheet
-      v-model="bottomSheet"
-      hide-overlay
-      inset
-    >
-      <v-sheet
-        class="text-center"
-        max-height="60vh"
-      >
-        <v-btn
-          class="mt-6"
-          text
-          color="red"
-          @click="bottomSheet = !bottomSheet"
-        >
-          close
-        </v-btn>
-        <div class="py-3">
-          This is a bottom sheet using the controlled
-          by v-model instead of activator
-        </div>
-
-        <v-img
-          src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
-          height="200px"
-        ></v-img>
-      </v-sheet>
-    </v-bottom-sheet>
-
+    <NakamalBottomSheet></NakamalBottomSheet>
   </v-container>
 </template>
 
@@ -178,12 +158,14 @@ import {
 import NakamalSearchDialog from '@/components/NakamalSearchDialog.vue';
 import NewNakamalDialog from '@/components/NewNakamalDialog.vue';
 import NetworkStatusDialog from '@/components/NetworkStatusDialog.vue';
+import NakamalBottomSheet from '@/components/NakamalBottomSheet.vue';
 
 const iconPath = require('../assets/map-marker.svg');
 
 export default {
   name: 'NakamalMap',
   components: {
+    NakamalBottomSheet,
     NetworkStatusDialog,
     NakamalSearchDialog,
     NewNakamalDialog,
@@ -230,6 +212,7 @@ export default {
       mapTileLoaded: 0,
       // Bottom sheet
       bottomSheet: false,
+      bottomSheetFull: false,
     };
   },
   computed: {
@@ -256,6 +239,7 @@ export default {
         'setCenter',
         'setZoom',
         'setShowNewNakamalMarker',
+        'setShowDetails',
       ],
     ),
     flyTo(latlng, zoom = 18) {

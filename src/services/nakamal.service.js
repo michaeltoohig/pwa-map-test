@@ -19,9 +19,7 @@ function getNakamalList() {
   return a;
 }
  
-console.log('Building nakamal test list');
 let bars = getNakamalList();
-console.log('Got bars');
 
 export default {
   get() {

@@ -24,7 +24,9 @@
       </v-card-title>
       <v-card-text>
         <p>
-          You are currently offline.
+          You are currently offline. The app is made so that
+          the map should continue to work in areas you've
+          already visited.
         </p>
       </v-card-text>
       <v-card-actions>

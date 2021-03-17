@@ -1,9 +1,8 @@
 <template>
   <v-navigation-drawer
-    app
+    v-model="drawer"
     right
-    permanent
-    width="500px"
+    app
   >
     <v-row
       class="fill-height"

@@ -8,6 +8,7 @@ const initialState = () => ({
   zoom: 15,
   showNewNakamalMarker: false,
   showSearch: false,
+  showDetails: false,
 });
 
 const state = initialState()
@@ -27,7 +28,10 @@ const getters = {
   },
   showSearch: (state) => {
     return state.showSearch;
-  }
+  },
+  showDetails: (state) => {
+    return state.showDetails;
+  },
 };
 
 const actions = {
@@ -45,7 +49,10 @@ const actions = {
   },
   setShowSearch: async ({ commit }, show) => {
     commit('setShowSearch', show);
-  }
+  },
+  setShowDetails: async ({ commit }, show) => {
+    commit('setShowDetails', show);
+  },
 };
 
 const mutations = {
@@ -69,6 +76,9 @@ const mutations = {
   },
   setShowSearch: (state, show) => {
     state.showSearch = show;
+  },
+  setShowDetails: (state, show) => {
+    state.showDetails = show;
   },
 };
 
