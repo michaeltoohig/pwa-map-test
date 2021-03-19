@@ -3,7 +3,8 @@
 Primarily a test ground to try some technologies I want to use for an app.
 
 [x] PWA
-  [ ] work and load page while offline
+  [ ] icons and paths
+  [x] work and load page while offline
     [x] alert user they are offline or back online
   [x] update popup UI
   [x] cache static files such as fonts
