@@ -82,7 +82,7 @@
         <v-fab-transition>
           <v-btn
             v-if="showNewNakamalMarker"
-            color="secondary"
+            color="accent"
             dark
             fab
             @click="setShowNewNakamalMarker(false)"
@@ -113,7 +113,8 @@
               fab
               dark
               small
-              color="green"
+              color="primary lighten-2"
+              @click="setShowNewNakamalMarker(true)"
             >
               <v-icon>mdi-pencil</v-icon>
             </v-btn>
@@ -121,17 +122,10 @@
               fab
               dark
               small
-              color="indigo"
+              color="primary lighten-1"
+              @click="setShowNewNakamalMarker(true)"
             >
               <v-icon>mdi-plus</v-icon>
-            </v-btn>
-            <v-btn
-              fab
-              dark
-              small
-              color="red"
-            >
-              <v-icon>mdi-delete</v-icon>
             </v-btn>
           </v-speed-dial>
         </v-fab-transition>
