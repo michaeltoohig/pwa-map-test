@@ -1,38 +1,38 @@
 <template>
   <v-bottom-sheet
     v-model="show"
+    persistent
     scrollable
     :fullscreen="fullscreen || $vuetify.breakpoint.smAndDown"
     max-height="70vh"
   >
     <v-card>
-      <v-card-title>{{ selectedNakamal.name }}</v-card-title>
+      <v-card-title>
+        <h2 class="display-1">{{ selectedNakamal.name }}</h2>
+        <v-spacer></v-spacer>
+        <v-btn icon @click="setShowDetails(false)">
+        <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </v-card-title>
       <v-divider></v-divider>
-      <v-card-text>
-        <div class="py-10">
-          {{ selectedNakamal }}
+      <v-card-text class="mt-3">
+        <div>
+          Owner: {{ selectedNakamal.ownerName || '-' }}
+          Contact: {{ selectedNakamal.ownerContact || '-' }}
+          Tags: {{ selectedNakamal.tags || '-' }}
+          Light: {{ selectedNakamal.light || '-' }}
+          Extras: {{ selectedNakamal.extras || '-' }}
         </div>
-
-        <v-img
-          src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
-          height="1000px"
-        ></v-img>
       </v-card-text>
       <v-divider></v-divider>
       <v-card-actions>
+        <v-spacer></v-spacer>
         <v-btn
-          color="blue darken-1"
+          color="primary darken-1"
           text
           @click="setShowDetails(false)"
         >
           Close
-        </v-btn>
-        <v-btn
-          color="blue darken-1"
-          text
-          @click="setShowDetails(false)"
-        >
-          Save
         </v-btn>
       </v-card-actions>
     </v-card>

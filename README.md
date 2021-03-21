@@ -3,10 +3,11 @@
 Primarily a test ground to try some technologies I want to use for an app.
 
 [x] PWA
-  [ ] icons and paths
-  [x] work and load page while offline
+  [x] icons and paths
+  [x] app shortcuts
+  [x] load pages while offline
     [x] alert user they are offline or back online
-  [x] update popup UI
+  [x] update available popup
   [x] cache static files such as fonts
   [x] cache map tiles
     [ ] learn to migrate database schema
@@ -33,7 +34,7 @@ I want to be able to support pushing to the end user updates that they request.
 
 ## Current task
 
-I should wrap the failed fetch requests when offline to prevent the logs. Also need to move more of the map functionality into the vuex store since interacting with nakamals on the map should be the same whether it is selected in the search bar or from the side bar but now they are different.
+I should wrap the failed fetch requests when offline to prevent the logs.
 
 NOTE: I've realized I've begun developing my app in this repo that should focus on learning and developing PWA and Leaflet skills so I'll migrate that code out in the 
 future into a repo built upon lessons here.

@@ -188,6 +188,7 @@ export default {
   methods: {
     submit() {
       this.$store.dispatch('nakamal/add', this.form);
+      this.$store.dispatch('map/setShowNewNakamalMarker', false);
       this.dialog = false;
     },
   },

@@ -113,19 +113,19 @@
               fab
               dark
               small
-              color="primary lighten-2"
-              @click="setShowNewNakamalMarker(true)"
+              color="primary lighten-1"
+              @click="showSearch"
             >
-              <v-icon>mdi-pencil</v-icon>
+              <v-icon>mdi-magnify</v-icon>
             </v-btn>
             <v-btn
               fab
               dark
               small
-              color="primary lighten-1"
-              @click="setShowNewNakamalMarker(true)"
+              color="primary lighten-2"
+              @click="newNakamalMarker"
             >
-              <v-icon>mdi-plus</v-icon>
+              <v-icon>mdi-pencil</v-icon>
             </v-btn>
           </v-speed-dial>
         </v-fab-transition>
@@ -234,8 +234,17 @@ export default {
         'setZoom',
         'setShowNewNakamalMarker',
         'setShowDetails',
+        'setShowSearch',
       ],
     ),
+    showSearch() {
+      this.fab = false;
+      this.setShowSearch(true);
+    },
+    newNakamalMarker() {
+      this.fab = false;
+      this.setShowNewNakamalMarker(true);
+    },
     flyTo(latlng, zoom = 18) {
       this.$refs.map.mapObject.setView(latlng, zoom);
     },
