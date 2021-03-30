@@ -1,4 +1,4 @@
-# map-test
+# pwa-map-test
 
 Primarily a test ground to try some technologies I want to use for an app.
 
