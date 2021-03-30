@@ -2,39 +2,33 @@
 
 Primarily a test ground to try some technologies I want to use for an app.
 
-[x] PWA
-  [x] icons and paths
-  [x] app shortcuts
-  [x] load pages while offline
-    [x] alert user they are offline or back online
-  [x] update available popup
-  [x] cache static files such as fonts
-  [x] cache map tiles
-    [ ] learn to migrate database schema
-    [x] expire map tiles (staleWhileValidate)
-    [x] speed up cache retreival by using indexed key instead of filter
-    [x] wrap console logs in checks if env === production
-    [ ] wrap console logs for failed fetch when offline
-    [ ] handle cache full
-    [ ] background sync or something to update backend when back online
-[x] WebPush
-  [ ] relook at `sw-push.js` and check all those events are up to date with current browsers and how I've implemented them
-[x] Map
-  [ ] dark theme map design
-  [x] bounded area
-  [x] max zoom out
-  [x] loading bar across page for currently downloading tiles
-  [x] viewport marker list
-  [x] search bar
-  [x] add new marker dialog
-
-I want the app to work offline including the map tiles to be cached and preloaded.
-I want to be able to support pushing to the end user updates that they request.
-
+ - [x] PWA
+   - [x] icons and paths
+   - [x] app shortcuts
+   - [x] load pages while offline
+   - [x] alert user they are offline or back online
+ - [x] update available popup
+ - [x] cache static files such as fonts
+ - [x] cache map tiles
+   - [ ] learn to migrate IndexedDB schema
+   - [x] expire map tiles (staleWhileValidate)
+   - [x] speed up cache retreival by using indexed key instead of filter
+   - [x] wrap console logs in checks if env === production
+   - [ ] wrap console logs for failed fetch when offline
+   - [ ] handle cache full
+   - [ ] background sync or something to POST to backend when back online
+ - [x] WebPush
+   - [ ] relook at `sw-push.js` and check all those events are up to date with current browsers and how I've implemented them
+ - [x] Map
+   - [ ] dark theme map design
+   - [x] bounded area
+   - [x] max zoom out
+   - [x] loading bar across page for currently downloading tiles
+   - [x] viewport marker list
+   - [x] search bar
+   - [x] add new marker dialog
 
 ## Current task
-
-I should wrap the failed fetch requests when offline to prevent the logs.
 
 NOTE: I've realized I've begun developing my app in this repo that should focus on learning and developing PWA and Leaflet skills so I'll migrate that code out in the 
 future into a repo built upon lessons here.
@@ -45,17 +39,6 @@ Search bar searches the store for nakamal by some attribute such as location or 
 Question becomes to I keep everything frontend? I believe I have to at least keep nakamal names, locations on frontend. Perhaps in future when opening more detailed
 information about a nakamal that would fetch from API then cache results for awhile. Any future plans for live updates would be websockets or something along those lines 
 to just make an event occur on the map but only when it is live.
-
-nakamal's data on the screen?
-  - Side bar with or without tabs
-    - Is a good idea but requires organizing data into a side bar nav or a custom card element that behaves like a navbar
-  - Bottom sheet again with or without tabs
-    - Another good choice but I would like the map to adjust to fit the space left over or it would cover the map on smaller screens
-  - Large popup with card embeded
-    - Maybe best for mobile and to show some details before committing to opening a full screen view on the mobile device
-  - Modal/Dialog
-    - I don't like covering the map but perhaps for mobile or after confirming to view additional details we open a dialog that blocks the map to focus on the details view.
-
 
 ## Map Notes
 
