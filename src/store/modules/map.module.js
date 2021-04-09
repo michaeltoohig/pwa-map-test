@@ -3,6 +3,7 @@
 import { latLng } from 'leaflet';
 
 const initialState = () => ({
+  location: null,
   bounds: null,
   center: latLng(-17.741526, 168.312024),
   zoom: 15,
@@ -14,6 +15,9 @@ const initialState = () => ({
 const state = initialState()
 
 const getters = {
+  location: (state) => {
+    return state.location;
+  },
   bounds: (state) => {
     return state.bounds;
   },
@@ -35,6 +39,9 @@ const getters = {
 };
 
 const actions = {
+  setLocation: async ({ commit }, location) => {
+    commit('setLocation', location);
+  },
   setBounds: async ({ commit }, bounds) => {
     commit('setBounds', bounds);
   },
@@ -61,6 +68,9 @@ const mutations = {
     Object.keys(newState).forEach(key => {
       state[key] = newState[key]
     })
+  },
+  setLocation: (state, location) => {
+    state.location = location;
   },
   setBounds: (state, bounds) => {
     state.bounds = bounds;

@@ -1,6 +1,6 @@
 {
-  "name": "Malokay",
-  "short_name": "Malokay",
+  "name": "PWA Map Test",
+  "short_name": "PWA Map Test",
   "theme_color": "#d29100",
   "background_color": "#006213",
   "display": "standalone",

@@ -41,6 +41,12 @@
       ></NewNakamalDialog>
 
       <l-marker
+        v-if="location"
+        :icon="icon"
+        :lat-lng="[location.latitude, location.longitude]"
+      ></l-marker>
+
+      <l-marker
         v-for="nakamal in nakamals"
         :key="nakamal.id"
         :icon="icon"
@@ -114,7 +120,16 @@
               dark
               small
               color="primary lighten-1"
-              @click="showSearch"
+              @click.stop="getLocation"
+            >
+              <v-icon>mdi-crosshairs-gps</v-icon>
+            </v-btn>
+            <v-btn
+              fab
+              dark
+              small
+              color="primary lighten-2"
+              @click.stop="showSearch"
             >
               <v-icon>mdi-magnify</v-icon>
             </v-btn>
@@ -122,8 +137,8 @@
               fab
               dark
               small
-              color="primary lighten-2"
-              @click="newNakamalMarker"
+              color="primary lighten-3"
+              @click.stop="newNakamalMarker"
             >
               <v-icon>mdi-pencil</v-icon>
             </v-btn>
@@ -211,6 +226,7 @@ export default {
   },
   computed: {
     ...mapGetters({
+      location: 'map/location',
       bounds: 'map/bounds',
       center: 'map/center',
       zoom: 'map/zoom',
@@ -227,8 +243,24 @@ export default {
     // }
   },
   methods: {
+    getLocation() {
+      if (!('geolocation' in navigator)) {
+        console.log('Geolocation is not available.');
+        return;
+      }
+
+      // get position
+      navigator.geolocation.getCurrentPosition((pos) => {
+        console.log(pos);
+        this.setLocation(pos.coords);
+        this.flyTo([pos.coords.latitude, pos.coords.longitude], 18);
+      }, (error) => {
+        console.log('error getting location', error);
+      });
+    },
     ...mapActions(
       'map', [
+        'setLocation',
         'setBounds',
         'setCenter',
         'setZoom',

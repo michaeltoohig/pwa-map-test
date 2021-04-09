@@ -1,16 +1,23 @@
 /* This mixin adds:
- * - `refreshing`, `registartion`, `updateExists` data properties
+ * - `noServiceWorker`, `refreshing`, `registartion`, `updateExists` data properties
  * - `updateAvailable`, `refreshApp` methods
  */
 export default {
   data() {
     return {
+      noServiceWorker: false,
       refreshing: false,
       registration: null,
       updateExists: false,
     };
   },
   created() {
+    if (!('seviceWorker' in navigator)) {
+      console.log('No service worker available :(');
+      this.noServiceWorker = true;
+      return;
+    }
+
     // once means the listener is removed after being called
     document.addEventListener('swUpdated', this.updateAvailable, { once: true });
 

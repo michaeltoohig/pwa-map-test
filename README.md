@@ -7,6 +7,7 @@ Primarily a test ground to try some technologies I want to use for an app.
    - [x] app shortcuts
    - [x] load pages while offline
    - [x] alert user they are offline or back online
+   - [x] alert if service worker is not available
  - [x] update available popup
  - [x] cache static files such as fonts
  - [x] cache map tiles
@@ -27,6 +28,11 @@ Primarily a test ground to try some technologies I want to use for an app.
    - [x] viewport marker list
    - [x] search bar
    - [x] add new marker dialog
+ - [ ] Location API
+   - [ ] get user device location permission
+   - [ ] get user device location
+   - [ ] show user device location on map
+   - [ ] alert location is not available
 
 ## Current task
 

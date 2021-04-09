@@ -9,10 +9,10 @@
       <v-list-item>
         <v-list-item-content>
           <v-list-item-title class="title">
-            Malokay
+            PWA Map Test
           </v-list-item-title>
           <v-list-item-subtitle>
-            Kava bar app
+            Progressive Web Application
           </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
@@ -49,7 +49,7 @@
         @click="drawer = !drawer"
       ></v-app-bar-nav-icon>
 
-      <v-toolbar-title>Malokay</v-toolbar-title>
+      <v-toolbar-title>PWA Map Test</v-toolbar-title>
 
       <v-spacer></v-spacer>
 
