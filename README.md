@@ -30,8 +30,8 @@ Primarily a test ground to try some technologies I want to use for an app.
    - [x] add new marker dialog
  - [ ] Location API
    - [ ] get user device location permission
-   - [ ] get user device location
-   - [ ] show user device location on map
+   - [x] get user device location
+   - [x] show user device location on map
    - [ ] alert location is not available
 
 ## Current task

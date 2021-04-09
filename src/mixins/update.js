@@ -12,7 +12,7 @@ export default {
     };
   },
   created() {
-    if (!('seviceWorker' in navigator)) {
+    if (!('serviceWorker' in navigator)) {
       console.log('No service worker available :(');
       this.noServiceWorker = true;
       return;
