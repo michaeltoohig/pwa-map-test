@@ -1,11 +1,15 @@
 {
   "name": "PWA Map Test",
   "short_name": "PWA Map Test",
+  "description": "An app to test PWA features to give you an offline map of Port Vila's kava bars.",
   "theme_color": "#d29100",
   "background_color": "#006213",
   "display": "standalone",
   "scope": "/",
   "start_url": "/",
+  "lang": "en",
+  "orientation": "portrait",
+  "categories": ["travel", "social", "lifestyle"],
   "icons": [
     {
       "src": "/img/AppImages/android/android-launchericon-192-192.png",
@@ -30,6 +34,18 @@
           "sizes": "192x192"
         }
       ]
+    }
+  ],
+  "screenshots" : [
+    {
+      "src": "/img/screenshots/1.jpeg",
+      "sizes": "1280x720",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "/img/screenshots/2.jpeg",
+      "sizes": "1280x720",
+      "type": "image/jpeg"
     }
   ]
 }
